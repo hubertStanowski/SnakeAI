@@ -17,6 +17,7 @@ def main() -> None:
     graph = Graph(GRAPH_SIZE)
     human_playing = True
     human_player = Snake(graph)
+    graph.generate_food()
 
     while True:
         clock.tick(fps)
