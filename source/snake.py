@@ -56,9 +56,9 @@ class Snake:
         collides_top_bottom = not (0 <= self.head.col < graph.size)
         collides_left_right = not (0 <= self.head.row < graph.size)
 
-        if collides_top_bottom or collides_left_right or graph.grid[self.head.row][self.head.col].is_snake():
+        if collides_top_bottom or collides_left_right:
             self.alive = False
             self.moving = False
-
-        if graph.grid[self.head.row][self.head.col].is_snake():
-            print("COLLIDES SELF")
+        elif graph.grid[self.head.row][self.head.col].is_snake():
+            self.alive = False
+            self.moving = False

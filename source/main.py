@@ -13,7 +13,7 @@ def main() -> None:
     pygame.display.set_caption("Snake NEAT AI")
 
     clock = pygame.time.Clock()
-    fps = 10
+    fps = 15
     graph = Graph(GRAPH_SIZE)
     human_playing = True
     human_player = Snake(graph)
