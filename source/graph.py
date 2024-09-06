@@ -1,13 +1,15 @@
 from constants import *
 
 import pygame
+import random
 
 
 class Graph:
-    def __init__(self, size) -> None:
+    def __init__(self, size: int) -> None:
         self.size = size
         self.grid = [[GraphNode(row, col) for col in range(size)]
                      for row in range(size)]
+        self.food = None
 
     def draw(self, window) -> None:
         for row in self.grid:
@@ -16,15 +18,22 @@ class Graph:
 
         pygame.display.update()
 
+    def generate_food(self) -> None:
+        self.food = random.choice(random.choice(self.grid))
+        while not self.food.is_free:
+            self.food = random.choice(random.choice(self.grid))
+
+        self.food.color = FOOD_COLOR
+
 
 class GraphNode:
-    def __init__(self, row, col) -> None:
+    def __init__(self, row: int, col: int) -> None:
         self.row = row
         self.col = col
         self.color = BACKGROUND_COLOR
         self.size = NODE_SIZE
 
-    def draw(self, window, update=False) -> None:
+    def draw(self, window, update: bool = False) -> None:
         x = MARGIN + self.row * self.size
         y = MARGIN + self.col * self.size
 
@@ -44,3 +53,6 @@ class GraphNode:
 
         if update:
             pygame.display.update()
+
+    def is_free(self) -> bool:
+        return self.color == BACKGROUND_COLOR
