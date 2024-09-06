@@ -11,12 +11,12 @@ class Graph:
                      for row in range(size)]
         self.food = None
 
-    def draw(self, window) -> None:
+    def draw(self, window, update=False) -> None:
         for row in self.grid:
             for node in row:
                 node.draw(window)
-
-        pygame.display.update()
+        if update:
+            pygame.display.update()
 
     def generate_food(self) -> None:
         self.food = random.choice(random.choice(self.grid))
@@ -34,8 +34,8 @@ class GraphNode:
         self.size = NODE_SIZE
 
     def draw(self, window, update: bool = False) -> None:
-        x = MARGIN + self.col * self.size
-        y = MARGIN + self.row * self.size
+        x = LEFT_MARGIN + self.col * self.size
+        y = TOP_MARGIN + self.row * self.size
 
         pygame.draw.rect(window, self.color, (x, y, self.size, self.size))
         # pygame.draw.rect(window, WHITE, (x, y, self.size, self.size), 1) # worse than lines (uneven lines)

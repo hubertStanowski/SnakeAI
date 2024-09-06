@@ -62,3 +62,6 @@ class Snake:
         elif graph.grid[self.head.row][self.head.col].is_snake():
             self.alive = False
             self.moving = False
+
+    def get_score(self) -> int:
+        return len(self.body) - 2
