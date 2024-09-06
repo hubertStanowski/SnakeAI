@@ -41,10 +41,13 @@ class Snake:
 
         self.move_head()
         graph.grid[tail_row][tail_col].reset()
+
         self.check_collisions(graph)
         if not self.moving:
             return
+
         self.head.update_graph(graph)
+
         if (self.head.row, self.head.col) == (graph.food.row, graph.food.col):
             self.body.append(SnakeNode(graph, tail_row, tail_col))
             graph.generate_food()

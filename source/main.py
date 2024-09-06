@@ -30,16 +30,16 @@ def main() -> None:
                 if event.type == pygame.QUIT:
                     return
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
+                    if event.key == pygame.K_UP and human_player.row_vel != 1:
                         human_player.row_vel = -1
                         human_player.col_vel = 0
-                    elif event.key == pygame.K_DOWN:
+                    elif event.key == pygame.K_DOWN and human_player.row_vel != -1:
                         human_player.row_vel = 1
                         human_player.col_vel = 0
-                    elif event.key == pygame.K_LEFT:
+                    elif event.key == pygame.K_LEFT and human_player.col_vel != 1:
                         human_player.row_vel = 0
                         human_player.col_vel = -1
-                    elif event.key == pygame.K_RIGHT:
+                    elif event.key == pygame.K_RIGHT and human_player.col_vel != -1:
                         human_player.row_vel = 0
                         human_player.col_vel = 1
 
