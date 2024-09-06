@@ -45,6 +45,12 @@ def main() -> None:
                     elif event.key == pygame.K_RIGHT and human_player.col_vel != -1:
                         human_player.row_vel = 0
                         human_player.col_vel = 1
+                    elif event.key == pygame.K_BACKSPACE or event.key == pygame.K_DELETE:
+                        graph = Graph(GRAPH_SIZE)
+                        human_player = Snake(graph)
+                        graph.generate_food()
+                        score = 0
+                        display_reset(window)
 
         display_score(window, score)
 
@@ -53,11 +59,22 @@ def main() -> None:
 
 def display_score(window: pygame.Surface, score: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
-    label = font.render("Score: " + str(score), True, FONT_COLOR)
+    label = font.render("Score: " + str(score), True, WHITE)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 50))
 
     window.blit(label, label_rect)
+
+
+def display_reset(window: pygame.Surface) -> None:
+    font = pygame.font.SysFont(FONT, RESET_FONT_SIZE)
+    label = font.render("RESET", True, RED)
+    label_rect = label.get_rect(
+        center=((2*LEFT_MARGIN + GAME_SIZE) // 2, WINDOW_HEIGHT // 2.3))
+
+    window.blit(label, label_rect)
+    pygame.display.update()
+    pygame.time.delay(1000)
 
 
 if __name__ == "__main__":
