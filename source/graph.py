@@ -34,8 +34,8 @@ class GraphNode:
         self.size = NODE_SIZE
 
     def draw(self, window, update: bool = False) -> None:
-        x = MARGIN + self.row * self.size
-        y = MARGIN + self.col * self.size
+        x = MARGIN + self.col * self.size
+        y = MARGIN + self.row * self.size
 
         pygame.draw.rect(window, self.color, (x, y, self.size, self.size))
         # pygame.draw.rect(window, WHITE, (x, y, self.size, self.size), 1) # worse than lines (uneven lines)
@@ -56,3 +56,6 @@ class GraphNode:
 
     def is_free(self) -> bool:
         return self.color == BACKGROUND_COLOR
+
+    def reset(self) -> None:
+        self.color = BACKGROUND_COLOR
