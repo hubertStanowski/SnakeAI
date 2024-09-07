@@ -99,7 +99,7 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        self.fitness = 1 + self.get_score()**2 + self.lifespan / 50
+        self.fitness = 1 + self.get_score()**2
 
     def look(self) -> None:
         def remap(value: float, start1: float, stop1: float, start2: float, stop2: float) -> float:
@@ -112,20 +112,35 @@ class Player:
         bottom_distance = self.graph.size - self.head.row - 1
         left_distance = self.head.col
         right_distance = self.graph.size - self.head.col - 1
-        food_row_distance = abs(self.head.row - self.graph.food.row)
-        food_col_distance = abs(self.head.col - self.graph.food.col)
 
         self.vision.append(remap(top_distance, 0, self.graph.size - 1, 0, 1))
         self.vision.append(
             remap(bottom_distance, 0, self.graph.size - 1, 0, 1))
         self.vision.append(remap(left_distance, 0, self.graph.size - 1, 0, 1))
         self.vision.append(remap(right_distance, 0, self.graph.size - 1, 0, 1))
-        self.vision.append(
-            remap(food_row_distance, 0, self.graph.size - 1, 0, 1))
-        self.vision.append(
-            remap(food_col_distance, 0, self.graph.size - 1, 0, 1))
-        self.vision.append(self.row_vel)
-        self.vision.append(self.col_vel)
+
+        food_row = self.graph.food.row
+        food_col = self.graph.food.col
+
+        if food_row < self.head.row:
+            self.vision.append(1)
+        else:
+            self.vision.append(0)
+
+        if food_row > self.head.row:
+            self.vision.append(1)
+        else:
+            self.vision.append(0)
+
+        if food_col < self.head.col:
+            self.vision.append(1)
+        else:
+            self.vision.append(0)
+
+        if food_col > self.head.col:
+            self.vision.append(1)
+        else:
+            self.vision.append(0)
 
     def decide(self) -> None:
         if not self.vision:

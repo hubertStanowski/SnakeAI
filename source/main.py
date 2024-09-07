@@ -16,18 +16,19 @@ def main() -> None:
     pygame.display.set_caption("Snake NEAT AI")
 
     clock = pygame.time.Clock()
-    fps = 12
+    fps = 10
 
     human_player = Player()
     config = NeatConfig()
     score = 0
 
-    population = Population(config, size=100)
+    population = Population(config, size=200)
     ai_player = None
-    generation_target = 10
+    generation_target = 50
     human_playing = False
 
     while True:
+        fps = 10 if ai_player else 1000
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
@@ -59,7 +60,7 @@ def main() -> None:
                 population.update_survivors(window)
             elif population.generation == generation_target:
                 if not ai_player:
-                    ai_player = population.curr_best_player.clone()
+                    ai_player = population.prev_best_player.clone()
                 elif ai_player.alive:
                     ai_player.look()
                     ai_player.decide()
@@ -67,16 +68,17 @@ def main() -> None:
                     ai_player.draw(window)
                     score = ai_player.get_score()
             else:
+                print(population.generation,
+                      population.curr_best_player.get_score())
                 population.natural_selection()
-                print(population.generation)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
 
         display_score(window, score)
-
-        pygame.display.update()
+        if ai_player or human_playing:
+            pygame.display.update()
 
 
 def display_score(window: pygame.Surface, score: int) -> None:
