@@ -30,7 +30,7 @@ class Player:
         # NEAT
         self.fitness: float = 0
         self.lifespan: int = 0
-        self.genome_inputs: int = 12
+        self.genome_inputs: int = 10
         self.genome_outputs: int = 4
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
@@ -137,15 +137,6 @@ class Player:
 
         self.vision.append(remap(food_row, 0, self.graph.size-1, 0, 1))
         self.vision.append(remap(food_col, 0, self.graph.size-1, 0, 1))
-        self.vision.append(self.row_vel)
-        self.vision.append(self.col_vel)
-
-        for dr, dc in DIRECTIONS:
-            try:
-                current = self.graph.grid[self.head.row+dr][self.head.col+dc]
-                self.vision.append(int(current.is_snake()))
-            except IndexError:
-                self.vision.append(0)
 
     def decide(self, show=False) -> None:
         if not self.vision:
