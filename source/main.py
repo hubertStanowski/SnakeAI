@@ -1,6 +1,6 @@
 from constants import *
 from graph import *
-from snake import *
+from player import *
 
 import pygame
 
@@ -13,9 +13,9 @@ def main() -> None:
     pygame.display.set_caption("Snake NEAT AI")
 
     clock = pygame.time.Clock()
-    fps = 10
+    fps = 12
     human_playing = True
-    human_player = Snake()
+    human_player = Player()
     score = 0
 
     while True:
@@ -43,7 +43,7 @@ def main() -> None:
                         human_player.row_vel = 0
                         human_player.col_vel = 1
                     elif event.key == pygame.K_BACKSPACE or event.key == pygame.K_DELETE:
-                        human_player = Snake()
+                        human_player = Player()
                         display_reset(window)
             score = human_player.get_score()
 

@@ -13,7 +13,7 @@ class SnakeNode:
         graph.grid[self.row][self.col].color = self.color
 
 
-class Snake:
+class Player:
     def __init__(self) -> None:
         self.graph = Graph(GRAPH_SIZE)
         self.body = []
