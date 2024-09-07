@@ -1,6 +1,9 @@
 from constants import *
 from graph import *
-from player import *
+from player import Player
+
+from population import Population
+from neat_config import NeatConfig
 
 import pygame
 
@@ -14,18 +17,22 @@ def main() -> None:
 
     clock = pygame.time.Clock()
     fps = 12
-    human_playing = True
+
     human_player = Player()
+    config = NeatConfig()
     score = 0
+
+    population = Population(config, size=1000)
+    generation_target = 200
+    human_playing = True
 
     while True:
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
-        human_player.update()
-        human_player.draw(window)
-
         if human_playing:
+            human_player.update()
+            human_player.draw(window)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -46,6 +53,15 @@ def main() -> None:
                         human_player = Player()
                         display_reset(window)
             score = human_player.get_score()
+        else:
+            if not population.finished():
+                population.update_survivors(window)
+            else:
+                population.natural_selection()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
 
         display_score(window, score)
 

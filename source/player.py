@@ -1,5 +1,7 @@
 from constants import *
 from graph import *
+from genome import Genome
+from neat_config import NeatConfig
 
 
 class SnakeNode:
@@ -24,8 +26,15 @@ class Player:
         self.body.append(SnakeNode(self.graph, STARTING_ROW, STARTING_COL))
         self.body.append(SnakeNode(self.graph, STARTING_ROW-1, STARTING_COL))
         self.head = self.body[0]
-
         self.graph.generate_food()
+        # NEAT
+        self.fitness: float = 0
+        self.lifespan: int = 0
+        self.genome_inputs: int = 4
+        self.genome_outputs: int = 1
+        self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
+        self.vision: list[float] = []
+        self.sensor_view_data: list[float] = []
 
     def draw(self, window) -> None:
         self.graph.draw(window)
@@ -71,3 +80,35 @@ class Player:
 
     def get_score(self) -> int:
         return len(self.body) - 2
+
+    # NEAT
+    def clone(self) -> 'Player':
+        clone = Player()
+        clone.genome = self.genome.clone()
+        clone.fitness = self.fitness
+        clone.genome.generate_network()
+
+        return clone
+
+    def crossover(self, config: NeatConfig, other_parent: 'Player') -> 'Player':
+        child = Player()
+        child.genome = self.genome.crossover(config, other_parent.genome)
+        child.genome.generate_network()
+
+        return child
+
+    def update_fitness(self) -> None:
+        self.fitness = 1 + self.score**2 + self.lifespan / 50
+
+    def look(self) -> None:
+        def remap(value: float, start1: float, stop1: float, start2: float, stop2: float) -> float:
+            # Remaps a value in range(start1, stop1) proportionately to range(start2, stop2) and returns it
+            return (value - start1) / (stop1 - start1) * (stop2 - start2) + start2
+
+        self.vision = []
+
+    def decide(self) -> None:
+        if not self.vision:
+            return
+
+        decision = self.genome.feed_forward(self.vision)[0]

@@ -31,30 +31,28 @@ class Population:
 
         self.prev_best_player = self.curr_best_player
 
-    def update_survivors(self, window: pygame.Surfacem, node_id_renders: list) -> None:
-        drawn_count = 0
+    def update_survivors(self, window: pygame.Surface) -> None:
+        # drawn_count = 0
         for player in self.players:
             if player.alive:
                 player.look()
                 player.decide()
-
-            if player.flying:
                 player.update()
 
-            if ((player.flying and self.config.show_dying) or player.alive) and drawn_count < self.config.get_draw_limit():
-                player.draw(window, sensor_view=self.config.sensor_view)
-                drawn_count += 1
+            # if ((player.flying and self.config.show_dying) or player.alive) and drawn_count < self.config.get_draw_limit():
+            #     player.draw(window, sensor_view=self.config.sensor_view)
+            #     drawn_count += 1
 
             # not necessary but if possible show a bigger network
-            if player.score > self.curr_best_player.score or (player.score == self.curr_best_player.score and (len(player.genome.connections) > len(self.curr_best_player.genome.connections))):
+            if player.get_score() > self.curr_best_player.get_score() or (player.get_score() == self.curr_best_player.get_score() and (len(player.genome.connections) > len(self.curr_best_player.genome.connections))):
                 self.curr_best_player = player
 
-        if self.config.sensor_view:
-            self.curr_best_player.draw_network(window, node_id_renders)
+        # if self.config.sensor_view:
+        #     self.curr_best_player.draw_network(window, node_id_renders)
 
     def natural_selection(self) -> None:
         # Happens after at least one generation so there will always be prev_best_player
-        if self.prev_best_player.score >= self.curr_best_player.score:
+        if self.prev_best_player.get_score() >= self.curr_best_player.get_score():
             self.staleness += 1
         else:
             self.staleness = 0
