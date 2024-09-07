@@ -3,6 +3,8 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
+# TODO add step limiter without increasing score
+
 
 class SnakeNode:
     def __init__(self, graph: Graph, row: int, col: int) -> None:

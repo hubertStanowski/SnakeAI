@@ -34,10 +34,11 @@ class Population:
     def update_survivors(self, window: pygame.Surface) -> None:
         # drawn_count = 0
         for player in self.players:
-            if player.alive:
-                player.look()
-                player.decide()
-                player.update()
+            if player:
+                if player.alive:
+                    player.look()
+                    player.decide()
+                    player.update()
 
             # if ((player.flying and self.config.show_dying) or player.alive) and drawn_count < self.config.get_draw_limit():
             #     player.draw(window, sensor_view=self.config.sensor_view)

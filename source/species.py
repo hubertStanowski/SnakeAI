@@ -128,7 +128,6 @@ class Species:
             running_sum += player.fitness
             if running_sum >= random_threshold:
                 return player
-        return self.players[0]
 
     def update_average_fitness(self) -> None:
         if not self.players:

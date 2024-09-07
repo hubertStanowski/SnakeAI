@@ -7,7 +7,7 @@ class NeatConfig:
         self.big_weight_mutation_probablility: float = 0.1
         self.crossover_connection_disable_probablility: float = 0.75
         self.no_crossover_probability: float = 0.25
-        self.species_staleness_limit: int = 3
+        self.species_staleness_limit: int = 5
         self.population_staleness_limit: int = 10
         # compatibility coefficients: c1, c2, c3 and compatibility threshold (experimental values from article by creators of NEAT for not large population)
         self.excess_disjoint_coefficient: float = 1        # c1 = c2
