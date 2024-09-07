@@ -3,7 +3,7 @@ class NeatConfig:
         self.next_innovation_number: int = 1
         self.weight_mutation_probablility: float = 0.8
         self.add_connection_mutation_probability: float = 0.2
-        self.add_node_mutation_probablility: float = 0.01
+        self.add_node_mutation_probablility: float = 0.05
         self.big_weight_mutation_probablility: float = 0.1
         self.crossover_connection_disable_probablility: float = 0.75
         self.no_crossover_probability: float = 0.25

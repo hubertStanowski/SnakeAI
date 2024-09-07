@@ -104,8 +104,8 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        survival_bonus = self.lifespan / 50
-        food_bonus = (self.get_score()) ** 2
+        survival_bonus = self.lifespan / 30
+        food_bonus = self.get_score() ** 3
         collision_penalty = 1 if self.alive else 0.8
         self.fitness = (1 + food_bonus + survival_bonus) * collision_penalty
 
@@ -139,6 +139,13 @@ class Player:
         self.vision.append(remap(food_col, 0, self.graph.size-1, 0, 1))
         self.vision.append(self.row_vel)
         self.vision.append(self.col_vel)
+
+        for dr, dc in DIRECTIONS:
+            try:
+                current = self.graph.grid[self.head.row+dr][self.head.col+dc]
+                self.vision.append(int(current.is_snake()))
+            except IndexError:
+                self.vision.append(0)
 
     def decide(self) -> None:
         if not self.vision:

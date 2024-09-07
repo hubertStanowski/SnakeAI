@@ -15,6 +15,8 @@ STARTING_ROW = GRAPH_SIZE // 2
 STARTING_COL = 2
 STEP_LIMIT = 500
 
+DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
 # Font
 FONT = None
 SCORE_FONT_SIZE = 70

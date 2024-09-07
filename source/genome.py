@@ -168,6 +168,14 @@ class Genome:
 
         return child
 
+    def fully_connect(self, config: NeatConfig, innovation_history: list[InnovationHistory]):
+        for i in range(self.inputs):
+            for j in range(self.outputs):
+                self.connections.append(ConnectionGene(
+                    self.nodes[i], self.nodes[self.inputs+j], random.uniform(-0.5, 0.5), config.get_next_innovation_number()))
+                config.update_next_innovation_number()
+        self.connect_nodes()
+
     def get_innovation_number(self, config: NeatConfig, innovation_history: list[InnovationHistory], input: NodeGene, output: NodeGene) -> int:
         new = True
         current_innovation_number = config.get_next_innovation_number()

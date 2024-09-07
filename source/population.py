@@ -21,6 +21,8 @@ class Population:
 
         for _ in range(size):
             self.players.append(Player())
+            # self.players[-1].genome.fully_connect(config,
+            #                                       self.innovation_history)
             self.players[-1].genome.mutate(self.config,
                                            self.innovation_history)
             self.players[-1].genome.generate_network()
@@ -40,13 +42,13 @@ class Population:
                     player.decide()
                     player.update()
 
-            # if ((player.flying and self.config.show_dying) or player.alive) and drawn_count < self.config.get_draw_limit():
-            #     player.draw(window, sensor_view=self.config.sensor_view)
-            #     drawn_count += 1
+                # if ((player.flying and self.config.show_dying) or player.alive) and drawn_count < self.config.get_draw_limit():
+                #     player.draw(window, sensor_view=self.config.sensor_view)
+                #     drawn_count += 1
 
-            # not necessary but if possible show a bigger network
-            if player.get_score() > self.curr_best_player.get_score() or (player.get_score() == self.curr_best_player.get_score() and (len(player.genome.connections) > len(self.curr_best_player.genome.connections))):
-                self.curr_best_player = player
+                # not necessary but if possible show a bigger network
+                if player.get_score() > self.curr_best_player.get_score() or (player.get_score() == self.curr_best_player.get_score() and (len(player.genome.connections) > len(self.curr_best_player.genome.connections))):
+                    self.curr_best_player = player
 
         # if self.config.sensor_view:
         #     self.curr_best_player.draw_network(window, node_id_renders)
@@ -77,7 +79,7 @@ class Population:
                 self.players.append(s.reproduce(
                     self.config, self.innovation_history))
 
-        if len(self.players) < self.size:
+        if len(self.players) < self.size and self.prev_best_player:
             self.players.append(self.prev_best_player.clone())
 
         while len(self.players) < self.size:
