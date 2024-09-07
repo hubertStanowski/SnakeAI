@@ -61,7 +61,7 @@ class GraphNode:
         return self.color == FOOD_COLOR
 
     def is_snake(self) -> bool:
-        return not self.is_free() and not self.is_food()
+        return self.color == SNAKE_COLOR
 
     def reset(self) -> None:
         self.color = BACKGROUND_COLOR

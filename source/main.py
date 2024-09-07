@@ -24,11 +24,11 @@ def main() -> None:
 
     population = Population(config, size=500)
     ai_player = None
-    generation_target = 30
+    generation_target = 50
     human_playing = False
 
     while True:
-        fps = 10 if ai_player else 1000
+        fps = 10 if ai_player else 0
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)

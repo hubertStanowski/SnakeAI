@@ -30,7 +30,7 @@ class Player:
         # NEAT
         self.fitness: float = 0
         self.lifespan: int = 0
-        self.genome_inputs: int = 10
+        self.genome_inputs: int = 16
         self.genome_outputs: int = 4
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
@@ -104,7 +104,7 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        survival_bonus = self.lifespan / 30
+        survival_bonus = self.lifespan / 40
         food_bonus = self.get_score() ** 3
         collision_penalty = 1 if self.alive else 0.8
         self.fitness = (1 + food_bonus + survival_bonus) * collision_penalty
@@ -121,6 +121,7 @@ class Player:
         left_distance = self.head.col
         right_distance = self.graph.size - self.head.col - 1
 
+        # wall detection
         self.vision.append(remap(top_distance, 0, self.graph.size - 1, 0, 1))
         self.vision.append(
             remap(bottom_distance, 0, self.graph.size - 1, 0, 1))
@@ -130,13 +131,48 @@ class Player:
         food_row = self.graph.food.row
         food_col = self.graph.food.col
 
+        # food detection
         self.vision.append(int(food_row < self.head.row))
         self.vision.append(int(food_row > self.head.row))
         self.vision.append(int(food_col < self.head.col))
         self.vision.append(int(food_col > self.head.col))
 
-        self.vision.append(remap(food_row, 0, self.graph.size-1, 0, 1))
-        self.vision.append(remap(food_col, 0, self.graph.size-1, 0, 1))
+        # body detection
+        bottom_body = self.graph.size - 1
+        for i in range(self.head.row+1, self.graph.size):
+            if self.graph.grid[i][self.head.col].is_snake():
+                bottom_body = i
+                break
+
+        top_body = self.graph.size - 1
+        for i in range(self.head.row-1, -1, -1):
+            if self.graph.grid[i][self.head.col].is_snake():
+                top_body = i
+                break
+
+        right_body = self.graph.size - 1
+        for j in range(self.head.col+1, self.graph.size):
+            if self.graph.grid[self.head.row][j].is_snake():
+                right_body = j
+                break
+
+        left_body = self.graph.size - 1
+        for j in range(self.head.col-1, -1, -1):
+            if self.graph.grid[self.head.row][j].is_snake():
+                left_body = j
+                break
+
+        self.vision.append(remap(bottom_body, 0, self.graph.size-1, 0, 1))
+        self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
+        self.vision.append(remap(right_body, 0, self.graph.size-1, 0, 1))
+        self.vision.append(remap(left_body, 0, self.graph.size-1, 0, 1))
+
+        for dr, dc in DIRECTIONS:
+            try:
+                current = self.graph.grid[self.head.row+dr][self.head.col+dc]
+                self.vision.append(int(current.is_snake()))
+            except:
+                self.vision.append(0)
 
     def decide(self, show=False) -> None:
         if not self.vision:
