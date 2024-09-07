@@ -3,8 +3,6 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
-# TODO add step limiter without increasing score
-
 
 class SnakeNode:
     def __init__(self, graph: Graph, row: int, col: int) -> None:
@@ -37,6 +35,7 @@ class Player:
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
         self.sensor_view_data: list[float] = []
+        self.steps = 0
 
     def draw(self, window) -> None:
         self.graph.draw(window)
@@ -44,7 +43,10 @@ class Player:
     def update(self) -> None:
         if not self.moving:
             return
-
+        if self.steps >= STEP_LIMIT:
+            self.moving = False
+            self.alive = False
+        self.steps += 1
         self.lifespan += 1
         tail_row, tail_col = self.body[-1].row, self.body[-1].col
 
@@ -65,6 +67,7 @@ class Player:
         if (self.head.row, self.head.col) == (self.graph.food.row, self.graph.food.col):
             self.body.append(SnakeNode(self.graph, tail_row, tail_col))
             self.graph.generate_food()
+            self.steps = 0
 
     def check_collisions(self) -> None:
         collides_top_bottom = not (0 <= self.head.col < self.graph.size)
@@ -101,7 +104,10 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        self.fitness = 1 + self.get_score()**2
+        survival_bonus = self.lifespan / 50
+        food_bonus = (self.get_score()) ** 2
+        collision_penalty = 1 if self.alive else 0.8
+        self.fitness = (1 + food_bonus + survival_bonus) * collision_penalty
 
     def look(self) -> None:
         def remap(value: float, start1: float, stop1: float, start2: float, stop2: float) -> float:
