@@ -32,7 +32,7 @@ class Player:
         # NEAT
         self.fitness: float = 0
         self.lifespan: int = 0
-        self.genome_inputs: int = 8
+        self.genome_inputs: int = 12
         self.genome_outputs: int = 4
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
@@ -124,25 +124,15 @@ class Player:
         food_row = self.graph.food.row
         food_col = self.graph.food.col
 
-        if food_row < self.head.row:
-            self.vision.append(1)
-        else:
-            self.vision.append(0)
+        self.vision.append(int(food_row < self.head.row))
+        self.vision.append(int(food_row > self.head.row))
+        self.vision.append(int(food_col < self.head.col))
+        self.vision.append(int(food_col > self.head.col))
 
-        if food_row > self.head.row:
-            self.vision.append(1)
-        else:
-            self.vision.append(0)
-
-        if food_col < self.head.col:
-            self.vision.append(1)
-        else:
-            self.vision.append(0)
-
-        if food_col > self.head.col:
-            self.vision.append(1)
-        else:
-            self.vision.append(0)
+        self.vision.append(remap(food_row, 0, self.graph.size-1, 0, 1))
+        self.vision.append(remap(food_col, 0, self.graph.size-1, 0, 1))
+        self.vision.append(self.row_vel)
+        self.vision.append(self.col_vel)
 
     def decide(self) -> None:
         if not self.vision:
