@@ -103,6 +103,8 @@ class Population:
             s.players = []
 
         for player in self.players:
+            if not player:
+                continue
             assigned = False
             for s in self.species:
                 if s.is_this_species(self.config, player.genome):
