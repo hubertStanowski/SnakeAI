@@ -13,22 +13,19 @@ def main() -> None:
     pygame.display.set_caption("Snake NEAT AI")
 
     clock = pygame.time.Clock()
-    fps = 15
-    graph = Graph(GRAPH_SIZE)
+    fps = 10
     human_playing = True
-    human_player = Snake(graph)
-    graph.generate_food()
+    human_player = Snake()
     score = 0
 
     while True:
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
-        human_player.update(graph)
-        graph.draw(window)
+        human_player.update()
+        human_player.draw(window)
 
         if human_playing:
-            score = human_player.get_score()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
@@ -46,11 +43,9 @@ def main() -> None:
                         human_player.row_vel = 0
                         human_player.col_vel = 1
                     elif event.key == pygame.K_BACKSPACE or event.key == pygame.K_DELETE:
-                        graph = Graph(GRAPH_SIZE)
-                        human_player = Snake(graph)
-                        graph.generate_food()
-                        score = 0
+                        human_player = Snake()
                         display_reset(window)
+            score = human_player.get_score()
 
         display_score(window, score)
 
