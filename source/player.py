@@ -147,26 +147,40 @@ class Player:
             except IndexError:
                 self.vision.append(0)
 
-    def decide(self) -> None:
+    def decide(self, show=False) -> None:
         if not self.vision:
             return
 
         outputs = self.genome.feed_forward(self.vision)
+        if show:
+            print(outputs)
         decision = max(outputs)
-
+        # each decision into function and if can't do that one randomize
         if outputs[0] == decision:
             if self.row_vel != 1:
                 self.row_vel = -1
                 self.col_vel = 0
+            else:
+                self.row_vel = 0
+                self.col_vel = random.choice([-1, 1])
         elif outputs[1] == decision:
             if self.row_vel != -1:
                 self.row_vel = 1
                 self.col_vel = 0
+            else:
+                self.row_vel = 0
+                self.col_vel = random.choice([-1, 1])
         elif outputs[2] == decision:
             if self.col_vel != 1:
                 self.row_vel = 0
                 self.col_vel = -1
+            else:
+                self.row_vel = random.choice([-1, 1])
+                self.col_vel = 0
         elif outputs[3] == decision:
             if self.col_vel != -1:
                 self.row_vel = 0
                 self.col_vel = 1
+            else:
+                self.row_vel = random.choice([-1, 1])
+                self.col_vel = 0

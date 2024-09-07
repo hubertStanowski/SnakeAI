@@ -93,8 +93,9 @@ class Population:
 
     def finished(self) -> bool:
         for player in self.players:
-            if player.alive:
-                return False
+            if player:
+                if player.alive:
+                    return False
         return True
 
     def speciate(self) -> None:

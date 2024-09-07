@@ -34,6 +34,9 @@ class Species:
 
         child.genome.mutate(config, innovation_history)
 
+        if not child:
+            return Player()
+
         return child
 
     def is_this_species(self, config: NeatConfig, tested_genome: Genome) -> bool:
