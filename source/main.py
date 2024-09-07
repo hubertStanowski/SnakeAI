@@ -22,9 +22,10 @@ def main() -> None:
     config = NeatConfig()
     score = 0
 
-    population = Population(config, size=1000)
-    generation_target = 200
-    human_playing = True
+    population = Population(config, size=100)
+    ai_player = None
+    generation_target = 10
+    human_playing = False
 
     while True:
         clock.tick(fps)
@@ -56,8 +57,18 @@ def main() -> None:
         else:
             if not population.finished():
                 population.update_survivors(window)
+            elif population.generation == generation_target:
+                if not ai_player:
+                    ai_player = population.curr_best_player.clone()
+                elif ai_player.alive:
+                    ai_player.look()
+                    ai_player.decide()
+                    ai_player.update()
+                    ai_player.draw(window)
+                    score = ai_player.get_score()
             else:
                 population.natural_selection()
+                print(population.generation)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

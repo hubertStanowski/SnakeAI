@@ -30,8 +30,8 @@ class Player:
         # NEAT
         self.fitness: float = 0
         self.lifespan: int = 0
-        self.genome_inputs: int = 4
-        self.genome_outputs: int = 1
+        self.genome_inputs: int = 8
+        self.genome_outputs: int = 4
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
         self.sensor_view_data: list[float] = []
@@ -43,6 +43,7 @@ class Player:
         if not self.moving:
             return
 
+        self.lifespan += 1
         tail_row, tail_col = self.body[-1].row, self.body[-1].col
 
         for i in range(len(self.body) - 1, 0, -1):
@@ -98,7 +99,7 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        self.fitness = 1 + self.score**2 + self.lifespan / 50
+        self.fitness = 1 + self.get_score()**2 + self.lifespan / 50
 
     def look(self) -> None:
         def remap(value: float, start1: float, stop1: float, start2: float, stop2: float) -> float:
@@ -107,8 +108,45 @@ class Player:
 
         self.vision = []
 
+        top_distance = self.head.row
+        bottom_distance = self.graph.size - self.head.row - 1
+        left_distance = self.head.col
+        right_distance = self.graph.size - self.head.col - 1
+        food_row_distance = abs(self.head.row - self.graph.food.row)
+        food_col_distance = abs(self.head.col - self.graph.food.col)
+
+        self.vision.append(remap(top_distance, 0, self.graph.size - 1, 0, 1))
+        self.vision.append(
+            remap(bottom_distance, 0, self.graph.size - 1, 0, 1))
+        self.vision.append(remap(left_distance, 0, self.graph.size - 1, 0, 1))
+        self.vision.append(remap(right_distance, 0, self.graph.size - 1, 0, 1))
+        self.vision.append(
+            remap(food_row_distance, 0, self.graph.size - 1, 0, 1))
+        self.vision.append(
+            remap(food_col_distance, 0, self.graph.size - 1, 0, 1))
+        self.vision.append(self.row_vel)
+        self.vision.append(self.col_vel)
+
     def decide(self) -> None:
         if not self.vision:
             return
 
-        decision = self.genome.feed_forward(self.vision)[0]
+        outputs = self.genome.feed_forward(self.vision)
+        decision = max(outputs)
+
+        if outputs[0] == decision:
+            if self.row_vel != 1:
+                self.row_vel = -1
+                self.col_vel = 0
+        elif outputs[1] == decision:
+            if self.row_vel != -1:
+                self.row_vel = 1
+                self.col_vel = 0
+        elif outputs[2] == decision:
+            if self.col_vel != 1:
+                self.row_vel = 0
+                self.col_vel = -1
+        elif outputs[3] == decision:
+            if self.col_vel != -1:
+                self.row_vel = 0
+                self.col_vel = 1

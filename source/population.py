@@ -90,7 +90,7 @@ class Population:
 
     def finished(self) -> bool:
         for player in self.players:
-            if player.alive or (player.flying and self.config.show_dying):
+            if player.alive:
                 return False
         return True
 
