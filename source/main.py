@@ -24,7 +24,7 @@ def main() -> None:
 
     population = Population(config, size=500)
     ai_player = None
-    generation_target = 30
+    generation_target = 20
     human_playing = False
 
     while True:
@@ -32,6 +32,7 @@ def main() -> None:
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
+        # human_player.graph.draw(window, update=True)
         if human_playing:
             human_player.update()
             human_player.draw(window)
@@ -67,6 +68,8 @@ def main() -> None:
                     ai_player.update()
                     ai_player.draw(window)
                     score = ai_player.get_score()
+                    if not ai_player.alive:
+                        pygame.time.delay(5000)
             else:
                 print(population.generation,
                       population.curr_best_player.get_score())
@@ -78,7 +81,8 @@ def main() -> None:
 
         display_score(window, score)
         if ai_player or human_playing:
-            pygame.display.update()
+            if ai_player.alive or human_playing:
+                pygame.display.update()
 
 
 def display_score(window: pygame.Surface, score: int) -> None:

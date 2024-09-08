@@ -3,6 +3,11 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
+# TODO change obstacle detection so that it is relative to head (velocity & direction)
+# TODO then use 3 outputs turn left turn right and do nothing
+# should fix issue when it's necessary to randomize action or it just dies
+# should greatly improve scores
+
 
 class SnakeNode:
     def __init__(self, graph: Graph, row: int, col: int) -> None:
@@ -124,17 +129,11 @@ class Player:
         self.vision.append(int(food_col < self.head.col))
         self.vision.append(int(food_col > self.head.col))
 
-        top_distance = self.head.row
-        bottom_distance = self.graph.size - self.head.row - 1
-        left_distance = self.head.col
-        right_distance = self.graph.size - self.head.col - 1
-
-        # # wall detection
-        # self.vision.append(remap(top_distance, 0, self.graph.size - 1, 0, 1))
-        # self.vision.append(
-        #     remap(bottom_distance, 0, self.graph.size - 1, 0, 1))
-        # self.vision.append(remap(left_distance, 0, self.graph.size - 1, 0, 1))
-        # self.vision.append(remap(right_distance, 0, self.graph.size - 1, 0, 1))
+        # wall detection
+        top_wall = self.head.row
+        bottom_wall = self.graph.size - self.head.row - 1
+        left_wall = self.head.col
+        right_wall = self.graph.size - self.head.col - 1
 
         # body detection
         bottom_body = self.graph.size - 1
@@ -161,27 +160,19 @@ class Player:
                 left_body = j
                 break
 
-        # self.vision.append(remap(bottom_body, 0, self.graph.size-1, 0, 1))
-        # self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
-        # self.vision.append(remap(right_body, 0, self.graph.size-1, 0, 1))
-        # self.vision.append(remap(left_body, 0, self.graph.size-1, 0, 1))
-
-        # for dr, dc in DIRECTIONS:
-        #     try:
-        #         current = self.graph.grid[self.head.row+dr][self.head.col+dc]
-        #         self.vision.append(int(current.is_snake()))
-        #     except:
-        #         self.vision.append(0)
-
-        top_obstacle = min(top_body, top_distance)
-        bottom_obstacle = min(bottom_body, bottom_distance)
-        left_obstacle = min(left_body, left_distance)
-        right_obstacle = min(right_body, right_distance)
+        # choose the closer obstacle as input
+        top_obstacle = min(top_body, top_wall)
+        bottom_obstacle = min(bottom_body, bottom_wall)
+        left_obstacle = min(left_body, left_wall)
+        right_obstacle = min(right_body, right_wall)
 
         self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
         self.vision.append(remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
         self.vision.append(remap(left_obstacle, 0, self.graph.size-1, 0, 1))
         self.vision.append(remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+
+        # self.vision.append(self.row_vel)
+        # self.vision.append(self.col_vel)
 
     def decide(self, show=False) -> None:
         if not self.vision:
@@ -191,6 +182,7 @@ class Player:
         if show:
             print(outputs)
         decision = max(outputs)
+
         # each decision into function and if can't do that one randomize
         if outputs[0] == decision:
             if self.row_vel != 1:
@@ -220,3 +212,16 @@ class Player:
             else:
                 self.row_vel = random.choice([-1, 1])
                 self.col_vel = 0
+
+        # if outputs[0] == decision:
+        #     pass
+        # elif outputs[1] == decision:
+        #     if self.row_vel:
+        #         self.col_vel = -1
+        #     else:
+        #         self.row_vel = -1
+        # elif outputs[2] == decision:
+        #     if self.row_vel:
+        #         self.col_vel = 1
+        #     else:
+        #         self.row_vel = 1
