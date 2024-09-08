@@ -22,9 +22,9 @@ def main() -> None:
     config = NeatConfig()
     score = 0
 
-    population = Population(config, size=250)
+    population = Population(config, size=500)
     ai_player = None
-    generation_target = 50
+    generation_target = 200
     human_playing = False
 
     while True:
@@ -64,7 +64,7 @@ def main() -> None:
                     ai_player = population.prev_best_player.clone()
                 elif ai_player.alive:
                     ai_player.look()
-                    ai_player.decide(show=True)
+                    ai_player.decide(show=False)
                     ai_player.update()
                     ai_player.draw(window)
                     score = ai_player.get_score()

@@ -3,7 +3,8 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
-# TODO fix sometimes disappearing food color
+# TODO fix disappearing food
+# TODO change food detection so it has distance not just direction
 
 
 class SnakeNode:
@@ -14,7 +15,8 @@ class SnakeNode:
         self.update_graph(graph)
 
     def update_graph(self, graph: Graph) -> None:
-        graph.grid[self.row][self.col].color = self.color
+        if graph.grid[self.row][self.col].is_free():
+            graph.grid[self.row][self.col].color = self.color
 
 
 class Player:
@@ -32,7 +34,7 @@ class Player:
         # NEAT
         self.fitness: float = 0
         self.lifespan: int = 0
-        self.genome_inputs: int = 8
+        self.genome_inputs: int = 12
         self.genome_outputs: int = 3
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
@@ -68,6 +70,7 @@ class Player:
 
         if (self.head.row, self.head.col) == (self.graph.food.row, self.graph.food.col):
             self.body.append(SnakeNode(self.graph, tail_row, tail_col))
+            self.graph.food.color = SNAKE_COLOR
             self.graph.generate_food()
             self.steps = 0
 
@@ -106,7 +109,7 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        survival_bonus = self.lifespan / 40
+        survival_bonus = self.lifespan / 100
         food_bonus = self.get_score() ** 3
         collision_penalty = 1 if self.alive else 0.8
         self.fitness = (1 + food_bonus + survival_bonus) * collision_penalty
@@ -153,63 +156,101 @@ class Player:
                 left_body = j
                 break
 
-        # choose the closer obstacle as input
-        top_obstacle = min(top_body, top_wall)
-        bottom_obstacle = min(bottom_body, bottom_wall)
-        left_obstacle = min(left_body, left_wall)
-        right_obstacle = min(right_body, right_wall)
+        # # choose the closer obstacle as input
+        # top_obstacle = min(top_body, top_wall)
+        # bottom_obstacle = min(bottom_body, bottom_wall)
+        # left_obstacle = min(left_body, left_wall)
+        # right_obstacle = min(right_body, right_wall)
+
+        top_food = int(food_row < self.head.row)
+        bottom_food = int(food_row > self.head.row)
+        left_food = int(food_col < self.head.col)
+        right_food = int(food_col > self.head.col)
+
         if self.row_vel == -VELOCITY:
-            self.vision.append(int(food_row < self.head.row))
-            self.vision.append(int(food_row > self.head.row))
-            self.vision.append(int(food_col < self.head.col))
-            self.vision.append(int(food_col > self.head.col))
+            self.vision.append(top_food)
+            self.vision.append(bottom_food)
+            self.vision.append(left_food)
+            self.vision.append(right_food)
 
-            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(bottom_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(left_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(right_body, 0, self.graph.size-1, 0, 1))
+
+            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(left_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(right_wall, 0, self.graph.size-1, 0, 1))
         elif self.row_vel == VELOCITY:
-            self.vision.append(int(food_row > self.head.row))
-            self.vision.append(int(food_row < self.head.row))
-            self.vision.append(int(food_col > self.head.col))
-            self.vision.append(int(food_col < self.head.col))
+            self.vision.append(bottom_food)
+            self.vision.append(top_food)
+            self.vision.append(right_food)
+            self.vision.append(left_food)
 
             self.vision.append(
-                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(bottom_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(right_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(left_body, 0, self.graph.size-1, 0, 1))
+
+            self.vision.append(
+                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(right_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(left_wall, 0, self.graph.size-1, 0, 1))
         elif self.col_vel == -VELOCITY:
-            self.vision.append(int(food_col < self.head.col))
-            self.vision.append(int(food_col > self.head.col))
-            self.vision.append(int(food_row > self.head.row))
-            self.vision.append(int(food_row < self.head.row))
+            self.vision.append(left_food)
+            self.vision.append(right_food)
+            self.vision.append(bottom_food)
+            self.vision.append(top_food)
 
             self.vision.append(
-                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(left_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(right_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(bottom_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
+
+            self.vision.append(
+                remap(left_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(right_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
         elif self.col_vel == VELOCITY:
-            self.vision.append(int(food_col > self.head.col))
-            self.vision.append(int(food_col < self.head.col))
-            self.vision.append(int(food_row < self.head.row))
-            self.vision.append(int(food_row > self.head.row))
+            self.vision.append(right_food)
+            self.vision.append(left_food)
+            self.vision.append(top_food)
+            self.vision.append(bottom_food)
 
             self.vision.append(
-                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(right_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(left_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(
-                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
+                remap(bottom_body, 0, self.graph.size-1, 0, 1))
+
+            self.vision.append(
+                remap(right_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(left_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
 
     def decide(self, show=False) -> None:
         if not self.vision:
@@ -219,36 +260,6 @@ class Player:
         if show:
             print(outputs)
         decision = max(outputs)
-
-        # each decision into function and if can't do that one randomize
-        # if outputs[0] == decision:
-        #     if self.row_vel != 1:
-        #         self.row_vel = -1
-        #         self.col_vel = 0
-        #     else:
-        #         self.row_vel = 0
-        #         self.col_vel = random.choice([-1, 1])
-        # elif outputs[1] == decision:
-        #     if self.row_vel != -1:
-        #         self.row_vel = 1
-        #         self.col_vel = 0
-        #     else:
-        #         self.row_vel = 0
-        #         self.col_vel = random.choice([-1, 1])
-        # elif outputs[2] == decision:
-        #     if self.col_vel != 1:
-        #         self.row_vel = 0
-        #         self.col_vel = -1
-        #     else:
-        #         self.row_vel = random.choice([-1, 1])
-        #         self.col_vel = 0
-        # elif outputs[3] == decision:
-        #     if self.col_vel != -1:
-        #         self.row_vel = 0
-        #         self.col_vel = 1
-        #     else:
-        #         self.row_vel = random.choice([-1, 1])
-        #         self.col_vel = 0
 
         if outputs[0] == decision:
             if self.row_vel != 0:
