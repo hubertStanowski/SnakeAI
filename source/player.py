@@ -165,14 +165,38 @@ class Player:
         bottom_obstacle = min(bottom_body, bottom_wall)
         left_obstacle = min(left_body, left_wall)
         right_obstacle = min(right_body, right_wall)
-
-        self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
-        self.vision.append(remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
-        self.vision.append(remap(left_obstacle, 0, self.graph.size-1, 0, 1))
-        self.vision.append(remap(right_obstacle, 0, self.graph.size-1, 0, 1))
-
-        # self.vision.append(self.row_vel)
-        # self.vision.append(self.col_vel)
+        if self.row_vel == -VELOCITY:
+            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+        elif self.row_vel == VELOCITY:
+            self.vision.append(
+                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+        elif self.col_vel == -VELOCITY:
+            self.vision.append(
+                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+        elif self.col_vel == VELOCITY:
+            self.vision.append(
+                remap(right_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(left_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
+            self.vision.append(
+                remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
 
     def decide(self, show=False) -> None:
         if not self.vision:
