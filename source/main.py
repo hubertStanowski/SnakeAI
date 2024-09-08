@@ -24,7 +24,7 @@ def main() -> None:
 
     population = Population(config, size=500)
     ai_player = None
-    generation_target = 200
+    generation_target = 30
     human_playing = False
 
     while True:
