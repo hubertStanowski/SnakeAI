@@ -24,15 +24,19 @@ def main() -> None:
 
     population = Population(config, size=500)
     ai_player = None
-    generation_target = 200
+    generation_target = 10
     human_playing = False
+
+    # remove when implementing gui
+    window.fill(BACKGROUND_COLOR)
+    # human_player.graph.draw(window, update=True)
+    pygame.display.update()
 
     while True:
         fps = 10 if ai_player else 0
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
-        # human_player.graph.draw(window, update=True)
         if human_playing:
             human_player.update()
             human_player.draw(window)

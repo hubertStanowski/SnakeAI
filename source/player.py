@@ -3,7 +3,6 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
-# TODO fix disappearing food
 # TODO change food detection so it has distance not just direction
 
 
@@ -15,8 +14,7 @@ class SnakeNode:
         self.update_graph(graph)
 
     def update_graph(self, graph: Graph) -> None:
-        if graph.grid[self.row][self.col].is_free():
-            graph.grid[self.row][self.col].color = self.color
+        graph.grid[self.row][self.col].color = self.color
 
 
 class Player:
@@ -70,7 +68,6 @@ class Player:
 
         if (self.head.row, self.head.col) == (self.graph.food.row, self.graph.food.col):
             self.body.append(SnakeNode(self.graph, tail_row, tail_col))
-            self.graph.food.color = SNAKE_COLOR
             self.graph.generate_food()
             self.steps = 0
 
@@ -109,7 +106,7 @@ class Player:
         return child
 
     def update_fitness(self) -> None:
-        survival_bonus = self.lifespan / 100
+        survival_bonus = 0  # self.lifespan / 100
         food_bonus = self.get_score() ** 3
         collision_penalty = 1 if self.alive else 0.8
         self.fitness = (1 + food_bonus + survival_bonus) * collision_penalty
