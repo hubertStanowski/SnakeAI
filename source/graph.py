@@ -25,6 +25,13 @@ class Graph:
 
         self.food.color = FOOD_COLOR
 
+    def generate_obstacles(self) -> None:
+        for row in self.grid:
+            for node in row:
+                if node.is_free():
+                    if random.random() > 0.99:
+                        node.color = SNAKE_COLOR
+
 
 class GraphNode:
     def __init__(self, row: int, col: int) -> None:
