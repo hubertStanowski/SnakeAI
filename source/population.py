@@ -149,7 +149,8 @@ class Population:
 
     def update_fitness(self) -> None:
         for player in self.players:
-            player.update_fitness()
+            if player:
+                player.update_fitness()
 
     def get_avg_fitness_sum(self) -> float:
         return sum(species.average_fitness for species in self.species)

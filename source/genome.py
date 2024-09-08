@@ -171,8 +171,10 @@ class Genome:
     def fully_connect(self, config: NeatConfig, innovation_history: list[InnovationHistory]):
         for i in range(self.inputs):
             for j in range(self.outputs):
+                curr_innovation_number = self.get_innovation_number(
+                    config, innovation_history, self.nodes[i], self.nodes[self.inputs+j])
                 self.connections.append(ConnectionGene(
-                    self.nodes[i], self.nodes[self.inputs+j], random.uniform(-0.5, 0.5), config.get_next_innovation_number()))
+                    self.nodes[i], self.nodes[self.inputs+j], random.uniform(-1, 1), curr_innovation_number))
                 config.update_next_innovation_number()
         self.connect_nodes()
 
