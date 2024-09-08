@@ -72,8 +72,6 @@ def main() -> None:
                     ai_player.update()
                     ai_player.draw(window)
                     score = ai_player.get_score()
-                    if not ai_player.alive:
-                        pygame.time.delay(5000)
             else:
                 print(population.generation,
                       population.curr_best_player.get_score())

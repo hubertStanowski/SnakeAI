@@ -12,7 +12,6 @@ class Graph:
         self.food = None
 
     def draw(self, window, update=False) -> None:
-        self.food.color = FOOD_COLOR
         for row in self.grid:
             for node in row:
                 node.draw(window)
@@ -21,8 +20,10 @@ class Graph:
 
     def generate_food(self) -> None:
         self.food = random.choice(random.choice(self.grid))
-        while not self.food.is_free:
+        while not self.food.is_free():
             self.food = random.choice(random.choice(self.grid))
+
+        self.food.color = FOOD_COLOR
 
     def generate_obstacles(self) -> None:
         for row in self.grid:
