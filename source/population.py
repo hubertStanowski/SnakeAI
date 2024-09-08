@@ -21,8 +21,8 @@ class Population:
 
         for _ in range(size):
             self.players.append(Player())
-            # self.players[-1].genome.fully_connect(config,
-            #                                       self.innovation_history)
+            self.players[-1].genome.fully_connect(config,
+                                                  self.innovation_history)
             self.players[-1].genome.mutate(self.config,
                                            self.innovation_history)
             self.players[-1].genome.generate_network()

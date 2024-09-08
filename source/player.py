@@ -3,10 +3,7 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
-# TODO change obstacle detection so that it is relative to head (velocity & direction)
-# TODO then use 3 outputs turn left turn right and do nothing
-# should fix issue when it's necessary to randomize action or it just dies
-# should greatly improve scores
+# TODO fix sometimes disappearing food color
 
 
 class SnakeNode:
@@ -36,7 +33,7 @@ class Player:
         self.fitness: float = 0
         self.lifespan: int = 0
         self.genome_inputs: int = 8
-        self.genome_outputs: int = 4
+        self.genome_outputs: int = 3
         self.genome: Genome = Genome(self.genome_inputs, self.genome_outputs)
         self.vision: list[float] = []
         self.sensor_view_data: list[float] = []
@@ -124,10 +121,6 @@ class Player:
         # food detection
         food_row = self.graph.food.row
         food_col = self.graph.food.col
-        self.vision.append(int(food_row < self.head.row))
-        self.vision.append(int(food_row > self.head.row))
-        self.vision.append(int(food_col < self.head.col))
-        self.vision.append(int(food_col > self.head.col))
 
         # wall detection
         top_wall = self.head.row
@@ -166,6 +159,11 @@ class Player:
         left_obstacle = min(left_body, left_wall)
         right_obstacle = min(right_body, right_wall)
         if self.row_vel == -VELOCITY:
+            self.vision.append(int(food_row < self.head.row))
+            self.vision.append(int(food_row > self.head.row))
+            self.vision.append(int(food_col < self.head.col))
+            self.vision.append(int(food_col > self.head.col))
+
             self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
             self.vision.append(
                 remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
@@ -174,6 +172,11 @@ class Player:
             self.vision.append(
                 remap(right_obstacle, 0, self.graph.size-1, 0, 1))
         elif self.row_vel == VELOCITY:
+            self.vision.append(int(food_row > self.head.row))
+            self.vision.append(int(food_row < self.head.row))
+            self.vision.append(int(food_col > self.head.col))
+            self.vision.append(int(food_col < self.head.col))
+
             self.vision.append(
                 remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
             self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
@@ -182,6 +185,11 @@ class Player:
             self.vision.append(
                 remap(left_obstacle, 0, self.graph.size-1, 0, 1))
         elif self.col_vel == -VELOCITY:
+            self.vision.append(int(food_col < self.head.col))
+            self.vision.append(int(food_col > self.head.col))
+            self.vision.append(int(food_row > self.head.row))
+            self.vision.append(int(food_row < self.head.row))
+
             self.vision.append(
                 remap(left_obstacle, 0, self.graph.size-1, 0, 1))
             self.vision.append(
@@ -190,6 +198,11 @@ class Player:
                 remap(bottom_obstacle, 0, self.graph.size-1, 0, 1))
             self.vision.append(remap(top_obstacle, 0, self.graph.size-1, 0, 1))
         elif self.col_vel == VELOCITY:
+            self.vision.append(int(food_col > self.head.col))
+            self.vision.append(int(food_col < self.head.col))
+            self.vision.append(int(food_row < self.head.row))
+            self.vision.append(int(food_row > self.head.row))
+
             self.vision.append(
                 remap(right_obstacle, 0, self.graph.size-1, 0, 1))
             self.vision.append(
@@ -208,44 +221,48 @@ class Player:
         decision = max(outputs)
 
         # each decision into function and if can't do that one randomize
-        if outputs[0] == decision:
-            if self.row_vel != 1:
-                self.row_vel = -1
-                self.col_vel = 0
-            else:
-                self.row_vel = 0
-                self.col_vel = random.choice([-1, 1])
-        elif outputs[1] == decision:
-            if self.row_vel != -1:
-                self.row_vel = 1
-                self.col_vel = 0
-            else:
-                self.row_vel = 0
-                self.col_vel = random.choice([-1, 1])
-        elif outputs[2] == decision:
-            if self.col_vel != 1:
-                self.row_vel = 0
-                self.col_vel = -1
-            else:
-                self.row_vel = random.choice([-1, 1])
-                self.col_vel = 0
-        elif outputs[3] == decision:
-            if self.col_vel != -1:
-                self.row_vel = 0
-                self.col_vel = 1
-            else:
-                self.row_vel = random.choice([-1, 1])
-                self.col_vel = 0
-
         # if outputs[0] == decision:
-        #     pass
+        #     if self.row_vel != 1:
+        #         self.row_vel = -1
+        #         self.col_vel = 0
+        #     else:
+        #         self.row_vel = 0
+        #         self.col_vel = random.choice([-1, 1])
         # elif outputs[1] == decision:
-        #     if self.row_vel:
+        #     if self.row_vel != -1:
+        #         self.row_vel = 1
+        #         self.col_vel = 0
+        #     else:
+        #         self.row_vel = 0
+        #         self.col_vel = random.choice([-1, 1])
+        # elif outputs[2] == decision:
+        #     if self.col_vel != 1:
+        #         self.row_vel = 0
         #         self.col_vel = -1
         #     else:
-        #         self.row_vel = -1
-        # elif outputs[2] == decision:
-        #     if self.row_vel:
+        #         self.row_vel = random.choice([-1, 1])
+        #         self.col_vel = 0
+        # elif outputs[3] == decision:
+        #     if self.col_vel != -1:
+        #         self.row_vel = 0
         #         self.col_vel = 1
         #     else:
-        #         self.row_vel = 1
+        #         self.row_vel = random.choice([-1, 1])
+        #         self.col_vel = 0
+
+        if outputs[0] == decision:
+            if self.row_vel != 0:
+                self.col_vel = self.row_vel
+                self.row_vel = 0
+            else:
+                self.row_vel = -self.col_vel
+                self.col_vel = 0
+        elif outputs[1] == decision:
+            if self.row_vel != 0:
+                self.col_vel = -self.row_vel
+                self.row_vel = 0
+            else:
+                self.row_vel = self.col_vel
+                self.col_vel = 0
+        else:
+            pass

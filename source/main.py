@@ -22,9 +22,9 @@ def main() -> None:
     config = NeatConfig()
     score = 0
 
-    population = Population(config, size=500)
+    population = Population(config, size=250)
     ai_player = None
-    generation_target = 30
+    generation_target = 50
     human_playing = False
 
     while True:
