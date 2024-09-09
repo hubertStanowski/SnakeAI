@@ -34,7 +34,7 @@ def main() -> None:
     pygame.display.update()
 
     while True:
-        fps = 10 if ai_player else 0
+        fps = 10 if ai_player or human_playing else 0
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
@@ -86,13 +86,14 @@ def main() -> None:
                     return
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        show_current = True
+                        if not ai_player or not ai_player.alive:
+                            show_current = True
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
                         ai_player = None
 
         display_score(window, score)
         if ai_player or human_playing:
-            if ai_player.alive or human_playing:
+            if human_playing or ai_player.alive:
                 pygame.display.update()
 
 
