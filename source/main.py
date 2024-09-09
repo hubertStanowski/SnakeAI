@@ -28,11 +28,6 @@ def main() -> None:
     human_playing = False
     show_current = False
 
-    # remove when implementing gui
-    window.fill(BACKGROUND_COLOR)
-    # human_player.graph.draw(window, update=True)
-    pygame.display.update()
-
     while True:
         fps = 10 if ai_player or human_playing else 0
         clock.tick(fps)
@@ -64,6 +59,8 @@ def main() -> None:
         else:
             if not population.finished():
                 population.update_survivors(window)
+                display_best_score(
+                    window, population.curr_best_player.get_score())
             elif not ai_player and (population.generation == generation_target or show_current):
                 show_current = False
                 ai_player = population.prev_best_player.clone()
@@ -90,24 +87,37 @@ def main() -> None:
                             show_current = True
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
                         ai_player = None
-
-        display_score(window, score)
+            display_generation(window, population.generation)
         if ai_player or human_playing:
-            if human_playing or ai_player.alive:
-                pygame.display.update()
+            display_curr_score(window, score)
+        pygame.display.update()
 
 
-def display_score(window: pygame.Surface, score: int) -> None:
+def display_curr_score(window: pygame.Surface, score: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
-    label = font.render("Score: " + str(score), True, WHITE)
+    label = font.render("Score: " + str(score), True, RUBY)
     label_rect = label.get_rect(
-        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 50))
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
+
+    window.blit(label, label_rect)
+
+
+def display_best_score(window: pygame.Surface, score: int) -> None:
+    font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
+    label = font.render("Best score: " + str(score), True, ORANGE)
+    label_rect = label.get_rect(
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
 
     window.blit(label, label_rect)
 
 
 def display_generation(window: pygame.Surface, generation: int) -> None:
-    pass
+    font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
+    label = font.render("Gen: " + str(generation), True, SNAKE_COLOR)
+    label_rect = label.get_rect(
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 50))
+
+    window.blit(label, label_rect)
 
 
 def display_reset(window: pygame.Surface) -> None:
