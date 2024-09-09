@@ -3,7 +3,11 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
-# TODO change food detection so it has distance not just direction
+
+# TODO these possibly later after UI
+# ? change food detection so it has distance not just direction
+# ? try training on smaller graphs and then chainging it (dynamic node size)
+# ? try randomizing starting length
 
 
 class SnakeNode:

@@ -26,6 +26,7 @@ def main() -> None:
     ai_player = None
     generation_target = 10
     human_playing = False
+    show_current = False
 
     # remove when implementing gui
     window.fill(BACKGROUND_COLOR)
@@ -63,10 +64,11 @@ def main() -> None:
         else:
             if not population.finished():
                 population.update_survivors(window)
-            elif population.generation == generation_target:
-                if not ai_player:
-                    ai_player = population.prev_best_player.clone()
-                elif ai_player.alive:
+            elif not ai_player and (population.generation == generation_target or show_current):
+                show_current = False
+                ai_player = population.prev_best_player.clone()
+            elif ai_player:
+                if ai_player.alive:
                     ai_player.look()
                     ai_player.decide(show=False)
                     ai_player.update()
@@ -80,6 +82,9 @@ def main() -> None:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        show_current = True
 
         display_score(window, score)
         if ai_player or human_playing:
