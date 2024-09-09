@@ -24,7 +24,7 @@ def main() -> None:
 
     population = Population(config, size=500)
     ai_player = None
-    generation_target = 10
+    generation_target = 20
     human_playing = False
     show_current = False
 
@@ -74,6 +74,8 @@ def main() -> None:
                     ai_player.update()
                     ai_player.draw(window)
                     score = ai_player.get_score()
+                else:
+                    ai_player = None
             else:
                 print(population.generation,
                       population.curr_best_player.get_score())
@@ -85,6 +87,8 @@ def main() -> None:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         show_current = True
+                    elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
+                        ai_player = None
 
         display_score(window, score)
         if ai_player or human_playing:
@@ -99,6 +103,10 @@ def display_score(window: pygame.Surface, score: int) -> None:
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 50))
 
     window.blit(label, label_rect)
+
+
+def display_generation(window: pygame.Surface, generation: int) -> None:
+    pass
 
 
 def display_reset(window: pygame.Surface) -> None:
