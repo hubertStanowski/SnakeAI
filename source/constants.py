@@ -15,6 +15,8 @@ STARTING_ROW = GRAPH_SIZE // 2
 STARTING_COL = 2
 STEP_LIMIT = 250  # was 500 change back if worse performance
 
+FPS = [7, 10, 20]
+
 DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
 # Font
