@@ -22,7 +22,8 @@ def main() -> None:
     config = NeatConfig()
     score = 0
 
-    population = Population(config, size=500)
+    population_size = 500
+    population = Population(config, size=population_size)
     node_id_renders = prerender_node_ids()
     ai_player = None
     generation_target = 20
@@ -87,12 +88,15 @@ def main() -> None:
                 if event.type == pygame.QUIT:
                     return
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_SPACE:
                         if not ai_player or not ai_player.alive:
                             show_current = True
-                    elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
+                    elif event.key == pygame.K_RETURN:
                         ai_player = None
                         pygame.time.delay(1000)
+                    elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
+                        population = Population(config, size=population_size)
+                        ai_player = None
 
             display_generation(window, population.generation)
             if not ai_player:
