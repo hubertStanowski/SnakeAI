@@ -134,6 +134,11 @@ class Player:
         left_wall = self.head.col
         right_wall = self.graph.size - self.head.col - 1
 
+        top_wall = remap(top_wall, 0, self.graph.size-1, 0, 1)
+        bottom_wall = remap(bottom_wall, 0, self.graph.size-1, 0, 1)
+        left_wall = remap(left_wall, 0, self.graph.size-1, 0, 1)
+        right_wall = remap(right_wall, 0, self.graph.size-1, 0, 1)
+
         # body detection
         bottom_body = self.graph.size - 1
         for i in range(self.head.row+1, self.graph.size):
@@ -159,12 +164,6 @@ class Player:
                 left_body = j
                 break
 
-        # # choose the closer obstacle as input
-        # top_obstacle = min(top_body, top_wall)
-        # bottom_obstacle = min(bottom_body, bottom_wall)
-        # left_obstacle = min(left_body, left_wall)
-        # right_obstacle = min(right_body, right_wall)
-
         top_food = int(food_row < self.head.row)
         bottom_food = int(food_row > self.head.row)
         left_food = int(food_col < self.head.col)
@@ -184,13 +183,10 @@ class Player:
             self.vision.append(
                 remap(right_body, 0, self.graph.size-1, 0, 1))
 
-            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(left_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(right_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(top_wall)
+            self.vision.append(bottom_wall)
+            self.vision.append(left_wall)
+            self.vision.append(right_wall)
         elif self.row_vel == VELOCITY:
             self.vision.append(bottom_food)
             self.vision.append(top_food)
@@ -205,13 +201,10 @@ class Player:
             self.vision.append(
                 remap(left_body, 0, self.graph.size-1, 0, 1))
 
-            self.vision.append(
-                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(right_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(left_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(bottom_wall)
+            self.vision.append(top_wall)
+            self.vision.append(right_wall)
+            self.vision.append(left_wall)
         elif self.col_vel == -VELOCITY:
             self.vision.append(left_food)
             self.vision.append(right_food)
@@ -226,13 +219,10 @@ class Player:
                 remap(bottom_body, 0, self.graph.size-1, 0, 1))
             self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
 
-            self.vision.append(
-                remap(left_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(right_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(left_wall)
+            self.vision.append(right_wall)
+            self.vision.append(bottom_wall)
+            self.vision.append(top_wall)
         elif self.col_vel == VELOCITY:
             self.vision.append(right_food)
             self.vision.append(left_food)
@@ -247,13 +237,10 @@ class Player:
             self.vision.append(
                 remap(bottom_body, 0, self.graph.size-1, 0, 1))
 
-            self.vision.append(
-                remap(right_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(left_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_wall, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(bottom_wall, 0, self.graph.size-1, 0, 1))
+            self.vision.append(right_wall)
+            self.vision.append(left_wall)
+            self.vision.append(top_wall)
+            self.vision.append(bottom_wall)
 
     def decide(self, show=False) -> None:
         if not self.vision:
@@ -283,6 +270,7 @@ class Player:
 
 
 # Here and not in genome.py as that file is meant to be reusable and this function is not
+
 
     def draw_network(self, window: pygame.Surface, node_id_renders: list[pygame.Surface]) -> None:
         if not self.genome.network:

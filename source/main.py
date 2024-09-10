@@ -145,9 +145,8 @@ def display_reset(window: pygame.Surface) -> None:
     pygame.display.update()
     pygame.time.delay(1000)
 
+
 # Optimization for drawing neural network
-
-
 def prerender_node_ids() -> list:
     renders = []
     font = pygame.font.Font(FONT, NODE_ID_FONT_SIZE)
