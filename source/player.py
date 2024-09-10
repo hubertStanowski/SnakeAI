@@ -3,6 +3,8 @@ from graph import *
 from genome import Genome
 from neat_config import NeatConfig
 
+from collections import defaultdict
+
 
 # TODO these possibly later after UI
 # ? change food detection so it has distance not just direction
@@ -278,3 +280,67 @@ class Player:
                 self.col_vel = 0
         else:
             pass
+
+
+# Here and not in genome.py as that file is meant to be reusable and this function is not
+
+    def draw_network(self, window: pygame.Surface, node_id_renders: list[pygame.Surface]) -> None:
+        if not self.genome.network:
+            return
+
+        radius = 14
+        x = WINDOW_WIDTH - radius*5
+        y = WINDOW_HEIGHT - BOTTOM_MARGIN
+        layer_count = self.genome.layer_count - 1
+        y_diff = radius * 3
+        x_diff = radius * 25 // layer_count
+
+        layers = defaultdict(list)
+        for node in self.genome.network:
+            layers[node.layer].append(node)
+
+        node_pos = {}
+
+        for layer, nodes in layers.items():
+            """
+            Hardcoding as there have never been >13 nodes in a layer
+            and don't want to overcomplicate it for nodes to look good 
+            and add new ones symetrically
+            """
+            y_positions = [y - 6*y_diff, y - 5*y_diff, y - 7*y_diff, y - 4*y_diff, y - 8*y_diff,
+                           y - 3*y_diff, y - 9*y_diff, y - 2*y_diff, y - 10*y_diff, y - y_diff,
+                           y - 11*y_diff, y, y - 12*y_diff]
+            for i, node in enumerate(nodes):
+                node_pos[node] = (x-(layer_count-layer)*x_diff, y_positions[i])
+
+        for connection in self.genome.connections:
+            input_pos = node_pos[connection.input]
+            output_pos = node_pos[connection.output]
+            pygame.draw.line(window, BRIGHT_BLUE, input_pos,
+                             output_pos, max(int(5 * abs(connection.weight)), 1))
+
+        # Seperate loop and not when assigning positions so that the connection line doesn't overlay the id
+        for node, pos in node_pos.items():
+            text = node_id_renders[node.id]
+            text_rect = text.get_rect(center=node_pos[node])
+
+            pygame.draw.circle(window, BRIGHT_BLUE, node_pos[node], radius+2)
+            pygame.draw.circle(window, DARK_GREEN, node_pos[node], radius)
+            window.blit(text, text_rect)
+
+
+"""
+12  12
+11  10
+10  8
+9   6
+8   4
+7   2
+6   1
+5   3
+4   5
+3   7
+2   9
+1   11
+0   13
+"""

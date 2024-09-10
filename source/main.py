@@ -16,20 +16,21 @@ def main() -> None:
     pygame.display.set_caption("Snake NEAT AI")
 
     clock = pygame.time.Clock()
-    fps = 10
+    user_fps = 10
 
     human_player = Player()
     config = NeatConfig()
     score = 0
 
     population = Population(config, size=500)
+    node_id_renders = prerender_node_ids()
     ai_player = None
     generation_target = 20
     human_playing = False
     show_current = False
 
     while True:
-        fps = 10 if ai_player or human_playing else 0
+        fps = user_fps if ai_player or human_playing else 0
         clock.tick(fps)
 
         window.fill(BACKGROUND_COLOR)
@@ -58,14 +59,12 @@ def main() -> None:
             score = human_player.get_score()
         else:
             if not population.finished():
-                population.update_survivors(window)
+                population.update_survivors()
                 display_best_score(
                     window, population.curr_best_player.get_score())
             elif not ai_player and (population.generation == generation_target or show_current):
                 show_current = False
                 ai_player = population.prev_best_player.clone()
-                print("NODES: ", len(ai_player.genome.nodes))
-                print("CONNECTIONS: ", len(ai_player.genome.connections))
             elif ai_player:
                 if ai_player.alive:
                     ai_player.look()
@@ -73,12 +72,15 @@ def main() -> None:
                     ai_player.update()
                     ai_player.draw(window)
                     score = ai_player.get_score()
+                    ai_player.draw_network(window, node_id_renders)
                 else:
                     ai_player = None
-                    pygame.time.delay(2000)
+                    pygame.time.delay(1000)
             else:
                 print(population.generation,
                       population.curr_best_player.get_score())
+                display_best_score(
+                    window, population.curr_best_player.get_score())
                 population.natural_selection()
 
             for event in pygame.event.get():
@@ -90,9 +92,12 @@ def main() -> None:
                             show_current = True
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
                         ai_player = None
-                        pygame.time.delay(2000)
+                        pygame.time.delay(1000)
 
             display_generation(window, population.generation)
+            if not ai_player:
+                population.curr_best_player.draw_network(
+                    window, node_id_renders)
         if ai_player or human_playing:
             display_curr_score(window, score)
 
@@ -135,6 +140,17 @@ def display_reset(window: pygame.Surface) -> None:
     window.blit(label, label_rect)
     pygame.display.update()
     pygame.time.delay(1000)
+
+# Optimization for drawing neural network
+
+
+def prerender_node_ids() -> list:
+    renders = []
+    font = pygame.font.Font(FONT, NODE_ID_FONT_SIZE)
+    for id in range(20):
+        renders.append(font.render(str(id), True, WHITE))
+
+    return renders
 
 
 if __name__ == "__main__":
