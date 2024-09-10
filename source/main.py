@@ -64,6 +64,8 @@ def main() -> None:
             elif not ai_player and (population.generation == generation_target or show_current):
                 show_current = False
                 ai_player = population.prev_best_player.clone()
+                print("NODES: ", len(ai_player.genome.nodes))
+                print("CONNECTIONS: ", len(ai_player.genome.connections))
             elif ai_player:
                 if ai_player.alive:
                     ai_player.look()
@@ -73,6 +75,7 @@ def main() -> None:
                     score = ai_player.get_score()
                 else:
                     ai_player = None
+                    pygame.time.delay(2000)
             else:
                 print(population.generation,
                       population.curr_best_player.get_score())
@@ -87,9 +90,12 @@ def main() -> None:
                             show_current = True
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
                         ai_player = None
+                        pygame.time.delay(2000)
+
             display_generation(window, population.generation)
         if ai_player or human_playing:
             display_curr_score(window, score)
+
         pygame.display.update()
 
 

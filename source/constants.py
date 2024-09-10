@@ -13,7 +13,7 @@ NODE_SIZE = GAME_SIZE // GRAPH_SIZE
 VELOCITY = 1
 STARTING_ROW = GRAPH_SIZE // 2
 STARTING_COL = 2
-STEP_LIMIT = 500
+STEP_LIMIT = 250  # was 500 change back if worse performance
 
 DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
