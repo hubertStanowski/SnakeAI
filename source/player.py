@@ -128,6 +128,11 @@ class Player:
         food_row = self.graph.food.row
         food_col = self.graph.food.col
 
+        top_food = int(food_row < self.head.row)
+        bottom_food = int(food_row > self.head.row)
+        left_food = int(food_col < self.head.col)
+        right_food = int(food_col > self.head.col)
+
         # wall detection
         top_wall = self.head.row
         bottom_wall = self.graph.size - self.head.row - 1
@@ -164,78 +169,70 @@ class Player:
                 left_body = j
                 break
 
-        top_food = int(food_row < self.head.row)
-        bottom_food = int(food_row > self.head.row)
-        left_food = int(food_col < self.head.col)
-        right_food = int(food_col > self.head.col)
+        top_body = remap(top_body, 0, self.graph.size-1, 0, 1)
+        bottom_body = remap(bottom_body, 0, self.graph.size-1, 0, 1)
+        left_body = remap(left_body, 0, self.graph.size-1, 0, 1)
+        right_body = remap(right_body, 0, self.graph.size-1, 0, 1)
 
+        # going up
         if self.row_vel == -VELOCITY:
             self.vision.append(top_food)
             self.vision.append(bottom_food)
             self.vision.append(left_food)
             self.vision.append(right_food)
 
-            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(bottom_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(left_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(right_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(top_body)
+            self.vision.append(bottom_body)
+            self.vision.append(left_body)
+            self.vision.append(right_body)
 
             self.vision.append(top_wall)
             self.vision.append(bottom_wall)
             self.vision.append(left_wall)
             self.vision.append(right_wall)
+        # going down
         elif self.row_vel == VELOCITY:
             self.vision.append(bottom_food)
             self.vision.append(top_food)
             self.vision.append(right_food)
             self.vision.append(left_food)
 
-            self.vision.append(
-                remap(bottom_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(right_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(left_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(bottom_body)
+            self.vision.append(top_body)
+            self.vision.append(right_body)
+            self.vision.append(left_body)
 
             self.vision.append(bottom_wall)
             self.vision.append(top_wall)
             self.vision.append(right_wall)
             self.vision.append(left_wall)
+        # going left
         elif self.col_vel == -VELOCITY:
             self.vision.append(left_food)
             self.vision.append(right_food)
             self.vision.append(bottom_food)
             self.vision.append(top_food)
 
-            self.vision.append(
-                remap(left_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(right_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(bottom_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(left_body)
+            self.vision.append(right_body)
+            self.vision.append(bottom_body)
+            self.vision.append(top_body)
 
             self.vision.append(left_wall)
             self.vision.append(right_wall)
             self.vision.append(bottom_wall)
             self.vision.append(top_wall)
+        # going right
         elif self.col_vel == VELOCITY:
             self.vision.append(right_food)
             self.vision.append(left_food)
             self.vision.append(top_food)
             self.vision.append(bottom_food)
 
-            self.vision.append(
-                remap(right_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(left_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(remap(top_body, 0, self.graph.size-1, 0, 1))
-            self.vision.append(
-                remap(bottom_body, 0, self.graph.size-1, 0, 1))
+            self.vision.append(right_body)
+            self.vision.append(left_body)
+            self.vision.append(top_body)
+            self.vision.append(bottom_body)
 
             self.vision.append(right_wall)
             self.vision.append(left_wall)
@@ -251,6 +248,7 @@ class Player:
             print(outputs)
         decision = max(outputs)
 
+        # turn left
         if outputs[0] == decision:
             if self.row_vel != 0:
                 self.col_vel = self.row_vel
@@ -258,6 +256,7 @@ class Player:
             else:
                 self.row_vel = -self.col_vel
                 self.col_vel = 0
+        # turn right
         elif outputs[1] == decision:
             if self.row_vel != 0:
                 self.col_vel = -self.row_vel
@@ -265,6 +264,7 @@ class Player:
             else:
                 self.row_vel = self.col_vel
                 self.col_vel = 0
+        # do nothing
         else:
             pass
 
@@ -317,6 +317,7 @@ class Player:
             window.blit(text, text_rect)
 
 
+# Node adding order id | *y_diff
 """
 12  12
 11  10
