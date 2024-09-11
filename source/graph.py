@@ -40,23 +40,27 @@ class GraphNode:
         self.color = BACKGROUND_COLOR
         self.size = NODE_SIZE
 
-    def draw(self, window, update: bool = False) -> None:
+    def draw(self, window, gridlines: bool = True, update: bool = False) -> None:
         x = LEFT_MARGIN + self.col * self.size
         y = TOP_MARGIN + self.row * self.size
 
+        # if self.row == 12 and self.col == 12:
+        #     self.color = BLACK
+
         pygame.draw.rect(window, self.color, (x, y, self.size, self.size))
-        # pygame.draw.rect(window, WHITE, (x, y, self.size, self.size), 1) # worse than lines (uneven lines)
-        pygame.draw.line(window, GRID_COLOR, (x, y),
-                         (x + self.size, y))
+        if gridlines:
+            # pygame.draw.rect(window, WHITE, (x, y, self.size, self.size), 1) # worse than lines (uneven lines)
+            pygame.draw.line(window, GRID_COLOR, (x, y),
+                             (x + self.size, y))
 
-        pygame.draw.line(window, GRID_COLOR, (x, y),
-                         (x, y + self.size))
+            pygame.draw.line(window, GRID_COLOR, (x, y),
+                             (x, y + self.size))
 
-        pygame.draw.line(window, GRID_COLOR, (x + self.size, y),
-                         (x + self.size, y + self.size))
+            pygame.draw.line(window, GRID_COLOR, (x + self.size, y),
+                             (x + self.size, y + self.size))
 
-        pygame.draw.line(window, GRID_COLOR, (x, y + self.size),
-                         (x + self.size, y + self.size))
+            pygame.draw.line(window, GRID_COLOR, (x, y + self.size),
+                             (x + self.size, y + self.size))
 
         if update:
             pygame.display.update()
@@ -68,7 +72,7 @@ class GraphNode:
         return self.color == FOOD_COLOR
 
     def is_snake(self) -> bool:
-        return self.color == SNAKE_COLOR
+        return not self.is_free() and not self.is_food()
 
     def reset(self) -> None:
         self.color = BACKGROUND_COLOR

@@ -4,6 +4,7 @@ from genome import Genome
 from neat_config import NeatConfig
 
 from collections import defaultdict
+import math
 
 
 # TODO these possibly later after UI
@@ -16,11 +17,53 @@ class SnakeNode:
     def __init__(self, graph: Graph, row: int, col: int) -> None:
         self.row = row
         self.col = col
-        self.color = SNAKE_COLOR
+        self.color = WHITE
         self.update_graph(graph)
 
     def update_graph(self, graph: Graph) -> None:
         graph.grid[self.row][self.col].color = self.color
+
+    def set_color(self, index: int, total: int, step: int) -> None:
+        # Calculate the hue based on the position in the snake body
+        hue = index / total
+        # Calculate the brightness to create a pulsing effect
+        brightness = (1 + 0.5 * math.sin((step+index) / 2.5)) / 1.5
+        # Saturation between 80-90%
+        saturation = 0.85 + 0.05 * math.sin((5*step + index) / 2.5)
+        r, g, b = self.hsv_to_rgb(hue, saturation, brightness)
+
+        # Apply a metallic effect by adjusting the RGB values
+        metallic_factor = 0.5
+        r = r * (1 - metallic_factor) + metallic_factor
+        g = g * (1 - metallic_factor) + metallic_factor
+        b = b * (1 - metallic_factor) + metallic_factor
+
+        self.color = (int(r * 255), int(g * 255), int(b * 255))
+
+    @staticmethod
+    def hsv_to_rgb(h, s, v):
+        if s == 0.0:
+            return v, v, v
+        i = int(h * 6.0)  # Assume hue < 1
+        f = (h * 6.0) - i
+        p = v * (1.0 - s)
+        q = v * (1.0 - s * f)
+        t = v * (1.0 - s * (1.0 - f))
+        i = i % 6
+        if i == 0:
+            return v, t, p
+        if i == 1:
+            return q, v, p
+        if i == 2:
+            return p, v, t
+        if i == 3:
+            return p, q, v
+        if i == 4:
+            return t, p, v
+        if i == 5:
+            return v, p, q
+        # Fallback to white in case of an error
+        return WHITE
 
 
 class Player:
@@ -49,6 +92,38 @@ class Player:
     def draw(self, window) -> None:
         self.graph.draw(window)
 
+        # Draw eyes on the head
+        eye_radius = 4
+        eye_offset = 6
+
+        # Calculate positions for the eyes based on the head's position and velocity direction
+        x = LEFT_MARGIN + self.head.col * NODE_SIZE
+        y = TOP_MARGIN + self.head.row * NODE_SIZE
+
+        if self.row_vel == -VELOCITY:  # Moving up
+            eye1_pos = (x + NODE_SIZE // 2 - eye_offset,
+                        y + NODE_SIZE // 2 - eye_offset // 2)
+            eye2_pos = (x + NODE_SIZE // 2 + eye_offset,
+                        y + NODE_SIZE // 2 - eye_offset // 2)
+        elif self.row_vel == VELOCITY:  # Moving down
+            eye1_pos = (x + NODE_SIZE // 2 - eye_offset,
+                        y + NODE_SIZE // 2 + eye_offset // 2)
+            eye2_pos = (x + NODE_SIZE // 2 + eye_offset,
+                        y + NODE_SIZE // 2 + eye_offset // 2)
+        elif self.col_vel == -VELOCITY:  # Moving left
+            eye1_pos = (x + NODE_SIZE // 2 - eye_offset // 2,
+                        y + NODE_SIZE // 2 - eye_offset)
+            eye2_pos = (x + NODE_SIZE // 2 - eye_offset // 2,
+                        y + NODE_SIZE // 2 + eye_offset)
+        elif self.col_vel == VELOCITY:  # Moving right
+            eye1_pos = (x + NODE_SIZE // 2 + eye_offset // 2,
+                        y + NODE_SIZE // 2 - eye_offset)
+            eye2_pos = (x + NODE_SIZE // 2 + eye_offset // 2,
+                        y + NODE_SIZE // 2 + eye_offset)
+
+        pygame.draw.circle(window, BLACK, eye1_pos, eye_radius)
+        pygame.draw.circle(window, BLACK, eye2_pos, eye_radius)
+
     def update(self) -> None:
         if not self.moving:
             return
@@ -62,9 +137,11 @@ class Player:
         for i in range(len(self.body) - 1, 0, -1):
             self.body[i].row = self.body[i-1].row
             self.body[i].col = self.body[i-1].col
+            self.body[i].set_color(i, len(self.body), self.lifespan)
             self.body[i].update_graph(self.graph)
 
         self.move_head()
+        self.head.set_color(0, len(self.body), self.lifespan)
         self.graph.grid[tail_row][tail_col].reset()
 
         self.check_collisions()
@@ -95,6 +172,23 @@ class Player:
 
     def get_score(self) -> int:
         return len(self.body) - 2
+
+# Direction change for AI (for human they are relative to the user view not head)
+    def turn_left(self) -> None:
+        if self.row_vel != 0:
+            self.col_vel = self.row_vel
+            self.row_vel = 0
+        else:
+            self.row_vel = -self.col_vel
+            self.col_vel = 0
+
+    def turn_right(self) -> None:
+        if self.row_vel != 0:
+            self.col_vel = -self.row_vel
+            self.row_vel = 0
+        else:
+            self.row_vel = self.col_vel
+            self.col_vel = 0
 
     # NEAT
     def clone(self) -> 'Player':
@@ -250,23 +344,10 @@ class Player:
             print(outputs)
         decision = max(outputs)
 
-        # turn left
         if outputs[0] == decision:
-            if self.row_vel != 0:
-                self.col_vel = self.row_vel
-                self.row_vel = 0
-            else:
-                self.row_vel = -self.col_vel
-                self.col_vel = 0
-        # turn right
+            self.turn_left()
         elif outputs[1] == decision:
-            if self.row_vel != 0:
-                self.col_vel = -self.row_vel
-                self.row_vel = 0
-            else:
-                self.row_vel = self.col_vel
-                self.col_vel = 0
-        # do nothing
+            self.turn_right()
         else:
             pass
 

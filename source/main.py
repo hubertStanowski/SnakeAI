@@ -35,7 +35,7 @@ def main() -> None:
     pause = False
     target_generation = 10
     human_playing = False
-    show_current = False
+    show_previous = False
     simulation_done = False
 
     while True:
@@ -68,10 +68,10 @@ def main() -> None:
             score = human_player.get_score()
         else:
             if not simulation_done:
-                if (population.generation-1 >= target_generation or show_current):
-                    if show_current:
+                if (population.generation-1 >= target_generation or show_previous):
+                    if show_previous:
                         ai_player = population.prev_best_player.clone()
-                        show_current = False
+                        show_previous = False
                     else:
                         ai_player = population.gen_best_players[target_generation-1].clone(
                         )
@@ -105,7 +105,7 @@ def main() -> None:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         if not ai_player or not ai_player.alive:
-                            show_current = True
+                            show_previous = True
                     elif event.key == pygame.K_RETURN:
                         pause = not pause
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
@@ -196,6 +196,10 @@ def draw_ui_lines(window: pygame.Surface) -> None:
                       ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 150), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 150)])
     pygame.draw.lines(window, BRIGHT_BLUE, True, [
                       ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 300), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 300)])
+
+
+def animate_evolving_progress(window: pygame.Surface) -> None:
+    pass
 
 
 # Optimization for drawing neural network
