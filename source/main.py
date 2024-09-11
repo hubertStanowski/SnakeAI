@@ -1,11 +1,16 @@
 from constants import *
 from graph import *
 from player import Player
-
+from buttons import initialize_buttons
 from population import Population
 from neat_config import NeatConfig
 
 import pygame
+
+
+# TODO buttons for 5, 10, 20 generation (change gen target on click)
+# TODO training progress bar curr_gen/target_gen
+# TODO buttons light up (light blue) when reached generation (ruby when selected)
 
 
 def main() -> None:
@@ -18,8 +23,10 @@ def main() -> None:
     clock = pygame.time.Clock()
     fps_idx = 1
 
-    human_player = Player()
+    buttons = initialize_buttons()
     config = NeatConfig()
+    human_player = Player()
+
     score = 0
 
     population_size = 500
@@ -105,6 +112,8 @@ def main() -> None:
                         fps_idx = max(fps_idx-1, 0)
 
             display_generation(window, population.generation)
+            for button in buttons.values():
+                button.draw(window)
 
         if ai_player or human_playing:
             display_curr_score(window, score)
