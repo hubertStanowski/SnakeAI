@@ -65,6 +65,9 @@ class SnakeNode:
         # Fallback to white in case of an error
         return WHITE
 
+    def pos(self) -> tuple[int, int]:
+        return self.row, self.col
+
 
 class Player:
     def __init__(self) -> None:
@@ -75,7 +78,7 @@ class Player:
         self.alive = True
         self.moving = True
         self.body.append(SnakeNode(self.graph, STARTING_ROW, STARTING_COL))
-        self.body.append(SnakeNode(self.graph, STARTING_ROW-1, STARTING_COL))
+        self.body.append(SnakeNode(self.graph, STARTING_ROW, STARTING_COL-1))
         self.head = self.body[0]
         self.graph.generate_food()
         # NEAT
@@ -89,8 +92,8 @@ class Player:
         self.steps = 0
         self.generation = 1
 
-    def draw(self, window) -> None:
-        self.graph.draw(window)
+    def draw(self, window, gridlines: bool = True) -> None:
+        self.graph.draw(window, gridlines)
         if not self.alive:
             return
 
@@ -126,10 +129,10 @@ class Player:
         pygame.draw.circle(window, BLACK, eye1_pos, eye_radius)
         pygame.draw.circle(window, BLACK, eye2_pos, eye_radius)
 
-    def update(self) -> None:
+    def update(self, animation=False) -> None:
         if not self.moving:
             return
-        if self.steps >= STEP_LIMIT:
+        if self.steps >= STEP_LIMIT and not animation:
             self.moving = False
             self.alive = False
         self.steps += 1
@@ -355,6 +358,7 @@ class Player:
 
 
 # Here and not in genome.py as that file is meant to be reusable and this function is not
+
 
     def draw_network(self, window: pygame.Surface, node_id_renders: list[pygame.Surface]) -> None:
         if not self.genome.network:

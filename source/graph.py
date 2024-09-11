@@ -11,10 +11,10 @@ class Graph:
                      for row in range(size)]
         self.food = None
 
-    def draw(self, window, update=False) -> None:
+    def draw(self, window, gridlines=True, update=False) -> None:
         for row in self.grid:
             for node in row:
-                node.draw(window)
+                node.draw(window, gridlines)
         if update:
             pygame.display.update()
 

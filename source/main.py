@@ -1,7 +1,7 @@
 from constants import *
 from graph import *
-from player import Player
-from buttons import initialize_buttons, Button
+from player import *
+from buttons import *
 from population import Population
 from neat_config import NeatConfig
 
@@ -9,6 +9,8 @@ import pygame
 
 
 # TODO training progress bar curr_gen/target_gen
+# TODO animate food pulsating cause why not
+# TODO move some functions to new helpers.py folder
 
 
 def main() -> None:
@@ -37,10 +39,13 @@ def main() -> None:
     human_playing = False
     show_previous = False
     simulation_done = False
+    animation_snake = initialize_animation_snake()
+    animation_step = [0]
 
     while True:
         fps = FPS[fps_idx] if ai_player.alive or human_playing else 0
         clock.tick(fps)
+        animation_step[0] += 1
 
         window.fill(BACKGROUND_COLOR)
         if human_playing:
@@ -83,6 +88,8 @@ def main() -> None:
                         print(
                             f"Gen: {population.generation}, Score: {population.curr_best_player.get_score()} / {population.best_ever_player.get_score()}")
                         population.natural_selection()
+                    animate_evolving_progress(
+                        window, animation_snake, animation_step, clock.get_fps())
 
             if simulation_done:
                 if ai_player.alive and not pause:
@@ -105,7 +112,8 @@ def main() -> None:
                         if simulation_done:
                             pause = not pause
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
-                        population = Population(config, size=population_size)
+                        population = Population(
+                            config, size=population_size)
                         ai_player.alive = False
                         simulation_done = False
                         display_reset(window)
@@ -198,11 +206,38 @@ def draw_ui_lines(window: pygame.Surface) -> None:
     pygame.draw.lines(window, BRIGHT_BLUE, True, [
                       ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 130), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 130)])
     pygame.draw.lines(window, BRIGHT_BLUE, True, [
-                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 310), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 310)])
+                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 320), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 320)])
 
 
-def animate_evolving_progress(window: pygame.Surface) -> None:
-    pass
+def animate_evolving_progress(window: pygame.Surface, animation_snake: Player, animation_step: list[int], real_fps: float) -> None:
+    if animation_step[0] > real_fps/20:
+        if animation_snake.head.pos() in [(10, 14), (10, 10), (14, 14), (14, 10)]:
+            animation_snake.turn_right()
+        animation_snake.update(animation=True)
+        animation_step[0] = 0
+
+    animation_snake.draw(window, gridlines=False)
+
+
+def initialize_animation_snake() -> Player:
+    animation_snake = Player()
+    animation_snake.graph = Graph(GRAPH_SIZE)
+    animation_snake.body = []
+    animation_snake.body.append(
+        SnakeNode(animation_snake.graph, 10, 13))
+    animation_snake.body.append(
+        SnakeNode(animation_snake.graph, 10, 12))
+    animation_snake.body.append(
+        SnakeNode(animation_snake.graph, 10, 11))
+    animation_snake.body.append(
+        SnakeNode(animation_snake.graph, 10, 10))
+
+    animation_snake.head = animation_snake.body[0]
+
+    animation_snake.graph.grid[12][12].color = RUBY
+    animation_snake.graph.food = animation_snake.graph.grid[12][12]
+
+    return animation_snake
 
 
 # Optimization for drawing neural network

@@ -44,6 +44,6 @@ def initialize_buttons() -> dict[int | str, Button]:
     generation_buttons[10] = Button("10", x + 2*x_diff, y, color=RUBY)
     generation_buttons[20] = Button("20", x + 3*x_diff, y)
     generation_buttons["best"] = Button(
-        "BEST", x+x_diff+13, y+BUTTON_HEIGHT+10, width=BUTTON_WIDTH*2)
+        "BEST", x+x_diff+13, y+BUTTON_HEIGHT+15, width=BUTTON_WIDTH*2)
 
     return generation_buttons
