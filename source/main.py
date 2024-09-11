@@ -1,7 +1,7 @@
 from constants import *
 from graph import *
 from player import Player
-from buttons import initialize_buttons
+from buttons import initialize_buttons, Button
 from population import Population
 from neat_config import NeatConfig
 
@@ -33,9 +33,10 @@ def main() -> None:
     population = Population(config, size=population_size)
     node_id_renders = prerender_node_ids()
     ai_player = None
-    generation_target = 50
+    target_generation = 10
     human_playing = False
     show_current = False
+    simulation_done = False
 
     while True:
         fps = FPS[fps_idx] if ai_player or human_playing else 0
@@ -74,7 +75,7 @@ def main() -> None:
 
             if not population.finished():
                 population.update_survivors()
-            elif not ai_player and (population.generation == generation_target or show_current):
+            elif not ai_player and (population.generation == target_generation or show_current) and not simulation_done:
                 show_current = False
                 ai_player = population.prev_best_player.clone()
             elif ai_player:
@@ -89,14 +90,14 @@ def main() -> None:
                     ai_player = None
                     pygame.time.delay(1000)
             else:
-                print("Gen:", population.generation, "Score:",
-                      population.curr_best_player.get_score())
+                print(
+                    f"Gen: {population.generation}, Score: {population.curr_best_player.get_score()}")
                 population.natural_selection()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
-                if event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         if not ai_player or not ai_player.alive:
                             show_current = True
@@ -110,6 +111,17 @@ def main() -> None:
                         fps_idx = min(fps_idx+1, len(FPS)-1)
                     elif event.key == pygame.K_MINUS:
                         fps_idx = max(fps_idx-1, 0)
+                elif pygame.mouse.get_pressed()[0]:
+                    pos = pygame.mouse.get_pos()
+                    for label, button in buttons.items():
+                        if button.clicked(pos):
+                            target_generation = label
+                            simulation_done = False
+
+                            button.select()
+                            for other in buttons.values():
+                                if other is not button:
+                                    other.unselect()
 
             display_generation(window, population.generation)
             for button in buttons.values():

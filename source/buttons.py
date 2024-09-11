@@ -22,17 +22,26 @@ class Button:
                 center=(self.x + self.width // 2, self.y + self.height // 2))
             window.blit(label, label_rect)
 
+    def clicked(self, pos) -> bool:
+        return self.visible and self.rect.collidepoint(pos)
 
-def initialize_buttons() -> None:
+    def select(self) -> None:
+        self.color = ORANGE
+
+    def unselect(self) -> None:
+        self.color = BRIGHT_BLUE
+
+
+def initialize_buttons() -> dict[int, Button]:
     generation_buttons = {}
 
     x = LEFT_MARGIN + GAME_SIZE + BUTTON_WIDTH*2 + 20
     y = TOP_MARGIN + 120
     x_diff = BUTTON_WIDTH*1.5
 
-    generation_buttons[5] = Button("5", x, y)
-    generation_buttons[10] = Button("10", x + x_diff, y)
-    generation_buttons[20] = Button("20", x + 2*x_diff, y)
-    generation_buttons[30] = Button("30", x + 3*x_diff, y)
+    generation_buttons[1] = Button("1", x, y)
+    generation_buttons[5] = Button("5", x + x_diff, y)
+    generation_buttons[10] = Button("10", x + 2*x_diff, y, color=ORANGE)
+    generation_buttons[20] = Button("20", x + 3*x_diff, y)
 
     return generation_buttons

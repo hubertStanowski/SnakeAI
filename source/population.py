@@ -18,6 +18,7 @@ class Population:
         self.prev_best_player: Player = None
         self.generation: int = 1
         self.staleness: int = 0
+        self.gen_best_players: list[Player] = []
 
         for _ in range(size):
             self.players.append(Player())
@@ -50,6 +51,7 @@ class Population:
             self.staleness += 1
         else:
             self.staleness = 0
+        self.gen_best_players.append(self.curr_best_player.clone())
         self.prev_best_player = self.curr_best_player
 
         self.speciate()
