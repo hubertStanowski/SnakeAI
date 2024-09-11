@@ -103,10 +103,10 @@ def main() -> None:
                 if event.type == pygame.QUIT:
                     return
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_RETURN:
                         if not ai_player or not ai_player.alive:
                             show_previous = True
-                    elif event.key == pygame.K_RETURN:
+                    elif event.key == pygame.K_SPACE:
                         pause = not pause
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
                         population = Population(config, size=population_size)
