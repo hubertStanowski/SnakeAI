@@ -107,11 +107,13 @@ def main() -> None:
                         if not ai_player or not ai_player.alive:
                             show_previous = True
                     elif event.key == pygame.K_SPACE:
-                        pause = not pause
+                        if simulation_done:
+                            pause = not pause
                     elif event.key == pygame.K_DELETE or event.key == pygame.K_BACKSPACE:
                         population = Population(config, size=population_size)
                         ai_player.alive = False
                         simulation_done = False
+                        display_reset(window)
                     elif event.key == pygame.K_EQUALS or event.key == pygame.K_PLUS:
                         fps_idx = min(fps_idx+1, len(FPS)-1)
                     elif event.key == pygame.K_MINUS:
@@ -129,14 +131,13 @@ def main() -> None:
                                     other.unselect()
 
             current_generation = ai_player.generation if simulation_done else population.generation
-            display_generation(window, current_generation, simulation_done)
+            display_generation(window, current_generation)
             display_button_info(window)
             draw_ui_lines(window)
             for button in buttons.values():
                 button.draw(window)
         if simulation_done or human_playing or ai_player.alive:
-            display_curr_score(
-                window, score, population.best_ever_player.get_score())
+            display_curr_score(window, score)
 
         pygame.display.update()
 
@@ -150,7 +151,7 @@ def display_button_info(window: pygame.Surface) -> None:
     window.blit(label, label_rect)
 
 
-def display_curr_score(window: pygame.Surface, score: int, best_ever: int) -> None:
+def display_curr_score(window: pygame.Surface, score: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
     label = font.render(f"Score: {score}", True, RUBY)
     label_rect = label.get_rect(
@@ -161,17 +162,16 @@ def display_curr_score(window: pygame.Surface, score: int, best_ever: int) -> No
 
 def display_best_score(window: pygame.Surface, score: int, best_ever: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
-    label = font.render(f"Best score: {score} / {best_ever}", True, ORANGE)
+    label = font.render(f"Best score: {score} / {best_ever}", True, RUBY)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
 
     window.blit(label, label_rect)
 
 
-def display_generation(window: pygame.Surface, generation: int, simulating: bool) -> None:
+def display_generation(window: pygame.Surface, generation: int) -> None:
     font = pygame.font.SysFont(FONT, GENERATION_FONT_SIZE)
-    label = font.render("Gen: " + str(generation), True,
-                        SNAKE_COLOR if not simulating else BRIGHT_BLUE)
+    label = font.render("Gen: " + str(generation), True, BRIGHT_BLUE)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 50))
 
@@ -207,7 +207,7 @@ def prerender_node_ids() -> list:
     renders = []
     font = pygame.font.Font(FONT, NODE_ID_FONT_SIZE)
     for id in range(20):
-        renders.append(font.render(str(id), True, WHITE))
+        renders.append(font.render(str(id), True, BRIGHT_BLUE))
 
     return renders
 

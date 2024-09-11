@@ -91,6 +91,8 @@ class Player:
 
     def draw(self, window) -> None:
         self.graph.draw(window)
+        if not self.alive:
+            return
 
         # Draw eyes on the head
         eye_radius = 4
@@ -395,7 +397,7 @@ class Player:
             text_rect = text.get_rect(center=node_pos[node])
 
             pygame.draw.circle(window, BRIGHT_BLUE, node_pos[node], radius+2)
-            pygame.draw.circle(window, DARK_GREEN, node_pos[node], radius)
+            pygame.draw.circle(window, RUBY, node_pos[node], radius)
             window.blit(text, text_rect)
 
 

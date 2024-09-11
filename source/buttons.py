@@ -26,7 +26,7 @@ class Button:
         return self.visible and self.rect.collidepoint(pos)
 
     def select(self) -> None:
-        self.color = ORANGE
+        self.color = RUBY
 
     def unselect(self) -> None:
         self.color = BRIGHT_BLUE
@@ -41,7 +41,7 @@ def initialize_buttons() -> dict[int, Button]:
 
     generation_buttons[1] = Button("1", x, y)
     generation_buttons[5] = Button("5", x + x_diff, y)
-    generation_buttons[10] = Button("10", x + 2*x_diff, y, color=ORANGE)
+    generation_buttons[10] = Button("10", x + 2*x_diff, y, color=RUBY)
     generation_buttons[20] = Button("20", x + 3*x_diff, y)
 
     return generation_buttons

@@ -30,7 +30,7 @@ class Graph:
             for node in row:
                 if node.is_free():
                     if random.random() > 0.99:
-                        node.color = SNAKE_COLOR
+                        node.color = LIGHT_GREEN
 
 
 class GraphNode:
