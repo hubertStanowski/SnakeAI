@@ -8,9 +8,7 @@ from neat_config import NeatConfig
 import pygame
 
 
-# TODO buttons for 5, 10, 20 generation (change gen target on click)
 # TODO training progress bar curr_gen/target_gen
-# TODO buttons light up (light blue) when reached generation (ruby when selected)
 
 
 def main() -> None:
@@ -71,7 +69,6 @@ def main() -> None:
         else:
             if not simulation_done:
                 if (population.generation-1 >= target_generation or show_current):
-                    # print(len(population.gen_best_players), target_generation)
                     if show_current:
                         ai_player = population.prev_best_player.clone()
                         show_current = False
@@ -80,8 +77,8 @@ def main() -> None:
                         )
                     simulation_done = True
                 else:
-                    display_best_score(
-                        window, population.curr_best_player.get_score())
+                    display_best_score(window, population.curr_best_player.get_score(
+                    ), population.best_ever_player.get_score())
                     population.curr_best_player.draw_network(
                         window, node_id_renders)
 
@@ -91,9 +88,9 @@ def main() -> None:
                         print(
                             f"Gen: {population.generation}, Score: {population.curr_best_player.get_score()} / {population.best_ever_player.get_score()}")
                         population.natural_selection()
+
             if simulation_done:
                 if ai_player.alive and not pause:
-                    print([x.generation for x in population.gen_best_players])
                     ai_player.look()
                     ai_player.decide(show=False)
                     ai_player.update()
@@ -133,26 +130,38 @@ def main() -> None:
 
             current_generation = ai_player.generation if simulation_done else population.generation
             display_generation(window, current_generation, simulation_done)
+            display_button_info(window)
+            draw_ui_lines(window)
             for button in buttons.values():
                 button.draw(window)
         if simulation_done or human_playing or ai_player.alive:
-            display_curr_score(window, score)
+            display_curr_score(
+                window, score, population.best_ever_player.get_score())
 
         pygame.display.update()
 
 
-def display_curr_score(window: pygame.Surface, score: int) -> None:
+def display_button_info(window: pygame.Surface) -> None:
+    font = pygame.font.SysFont(FONT, BUTTON_INFO_FONT_SIZE)
+    label = font.render("Simulate generation", True, BRIGHT_BLUE)
+    label_rect = label.get_rect(
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 195))
+
+    window.blit(label, label_rect)
+
+
+def display_curr_score(window: pygame.Surface, score: int, best_ever: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
-    label = font.render("Score: " + str(score), True, RUBY)
+    label = font.render(f"Score: {score}", True, RUBY)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
 
     window.blit(label, label_rect)
 
 
-def display_best_score(window: pygame.Surface, score: int) -> None:
+def display_best_score(window: pygame.Surface, score: int, best_ever: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
-    label = font.render("Best score: " + str(score), True, ORANGE)
+    label = font.render(f"Best score: {score} / {best_ever}", True, ORANGE)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
 
@@ -160,7 +169,7 @@ def display_best_score(window: pygame.Surface, score: int) -> None:
 
 
 def display_generation(window: pygame.Surface, generation: int, simulating: bool) -> None:
-    font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
+    font = pygame.font.SysFont(FONT, GENERATION_FONT_SIZE)
     label = font.render("Gen: " + str(generation), True,
                         SNAKE_COLOR if not simulating else BRIGHT_BLUE)
     label_rect = label.get_rect(
@@ -178,6 +187,15 @@ def display_reset(window: pygame.Surface) -> None:
     window.blit(label, label_rect)
     pygame.display.update()
     pygame.time.delay(1000)
+
+
+def draw_ui_lines(window: pygame.Surface) -> None:
+    # pygame.draw.lines(window, BRIGHT_BLUE, True, [
+    #                   (LEFT_MARGIN+GAME_SIZE+30, 30), (LEFT_MARGIN+GAME_SIZE+30, WINDOW_HEIGHT-30)])
+    pygame.draw.lines(window, BRIGHT_BLUE, True, [
+                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 150), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 150)])
+    pygame.draw.lines(window, BRIGHT_BLUE, True, [
+                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 300), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 300)])
 
 
 # Optimization for drawing neural network

@@ -36,7 +36,7 @@ def initialize_buttons() -> dict[int, Button]:
     generation_buttons = {}
 
     x = LEFT_MARGIN + GAME_SIZE + BUTTON_WIDTH*2 + 20
-    y = TOP_MARGIN + 120
+    y = TOP_MARGIN + 130 + BUTTON_HEIGHT
     x_diff = BUTTON_WIDTH*1.5
 
     generation_buttons[1] = Button("1", x, y)

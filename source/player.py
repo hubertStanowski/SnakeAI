@@ -277,7 +277,7 @@ class Player:
         if not self.genome.network:
             return
 
-        radius = 15
+        radius = 14
         x = WINDOW_WIDTH - radius*5 + 15
         y = WINDOW_HEIGHT - BOTTOM_MARGIN
         layer_count = self.genome.layer_count - 1
