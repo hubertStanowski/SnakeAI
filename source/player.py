@@ -9,7 +9,6 @@ import math
 
 # TODO these possibly later after UI
 # ? change food detection so it has distance not just direction
-# ? try training on smaller graphs and then chainging it (dynamic node size)
 # ? try randomizing starting length
 
 
@@ -366,7 +365,7 @@ class Player:
 
         radius = 14
         x = WINDOW_WIDTH - radius*5 + 15
-        y = WINDOW_HEIGHT - BOTTOM_MARGIN
+        y = WINDOW_HEIGHT - BOTTOM_MARGIN + 10
         layer_count = self.genome.layer_count - 1
         y_diff = radius * 3
         x_diff = radius * 25 // layer_count

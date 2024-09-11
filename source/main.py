@@ -9,7 +9,6 @@ import pygame
 
 
 # TODO training progress bar curr_gen/target_gen
-# TODO animate food pulsating cause why not
 # TODO move some functions to new helpers.py folder
 
 
@@ -23,22 +22,24 @@ def main() -> None:
     clock = pygame.time.Clock()
     fps_idx = 1
 
-    buttons = initialize_buttons()
+    human_playing = False
+    # population_size was 500 change back if bad performance, 100 for final version, 250 good for testing
+    population_size = 250
     config = NeatConfig()
-    human_player = Player()
-
+    population = Population(config, size=population_size)
     score = 0
 
-    population_size = 500
-    population = Population(config, size=population_size)
+    human_player = Player()
+    buttons = initialize_buttons()
     node_id_renders = prerender_node_ids()
     ai_player = Player()
     ai_player.alive = False
     pause = False
     target_generation = 10
-    human_playing = False
+
     show_previous = False
     simulation_done = False
+
     animation_snake = initialize_animation_snake()
     animation_step = [0]
 
@@ -223,14 +224,10 @@ def initialize_animation_snake() -> Player:
     animation_snake = Player()
     animation_snake.graph = Graph(GRAPH_SIZE)
     animation_snake.body = []
-    animation_snake.body.append(
-        SnakeNode(animation_snake.graph, 10, 13))
-    animation_snake.body.append(
-        SnakeNode(animation_snake.graph, 10, 12))
-    animation_snake.body.append(
-        SnakeNode(animation_snake.graph, 10, 11))
-    animation_snake.body.append(
-        SnakeNode(animation_snake.graph, 10, 10))
+    row = 10
+    for col in range(14, 9, -1):
+        animation_snake.body.append(
+            SnakeNode(animation_snake.graph, row, col))
 
     animation_snake.head = animation_snake.body[0]
 
