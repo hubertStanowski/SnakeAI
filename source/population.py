@@ -4,7 +4,6 @@ from player import Player
 from species import Species
 
 import math
-import pygame
 
 
 class Population:
@@ -16,6 +15,7 @@ class Population:
         self.species: list[Species] = []
         self.curr_best_player: Player = None
         self.prev_best_player: Player = None
+        self.best_ever_player: Player = None
         self.generation: int = 1
         self.staleness: int = 0
         self.gen_best_players: list[Player] = []
@@ -32,11 +32,14 @@ class Population:
             if not self.curr_best_player or len(self.players[-1].genome.nodes) > len(self.curr_best_player.genome.nodes):
                 self.curr_best_player = self.players[-1]
 
+            self.best_ever_player = self.curr_best_player
+
         self.prev_best_player = self.curr_best_player
 
     def update_survivors(self) -> None:
         for player in self.players:
             if player:
+                player.generation = self.generation
                 if player.alive:
                     player.look()
                     player.decide()
@@ -45,6 +48,9 @@ class Population:
                 if player.get_score() > self.curr_best_player.get_score():
                     self.curr_best_player = player
 
+                if self.best_ever_player.get_score() <= self.curr_best_player.get_score():
+                    self.best_ever_player = self.curr_best_player
+
     def natural_selection(self) -> None:
         # Happens after at least one generation so there will always be prev_best_player
         if self.prev_best_player.get_score() >= self.curr_best_player.get_score():
@@ -52,6 +58,7 @@ class Population:
         else:
             self.staleness = 0
         self.gen_best_players.append(self.curr_best_player.clone())
+
         self.prev_best_player = self.curr_best_player
 
         self.speciate()
@@ -80,6 +87,7 @@ class Population:
                 self.config, self.innovation_history))
 
         self.generation += 1
+        self.curr_best_player = self.players[0]
         for player in self.players:
             if player:
                 player.genome.generate_network()

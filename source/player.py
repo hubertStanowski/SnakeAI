@@ -44,6 +44,7 @@ class Player:
         self.vision: list[float] = []
         self.sensor_view_data: list[float] = []
         self.steps = 0
+        self.generation = 1
 
     def draw(self, window) -> None:
         self.graph.draw(window)
@@ -100,6 +101,7 @@ class Player:
         clone = Player()
         clone.genome = self.genome.clone()
         clone.fitness = self.fitness
+        clone.generation = self.generation
         clone.genome.generate_network()
 
         return clone
@@ -270,7 +272,6 @@ class Player:
 
 
 # Here and not in genome.py as that file is meant to be reusable and this function is not
-
 
     def draw_network(self, window: pygame.Surface, node_id_renders: list[pygame.Surface]) -> None:
         if not self.genome.network:
