@@ -77,11 +77,6 @@ def main() -> None:
                         )
                     simulation_done = True
                 else:
-                    display_best_score(window, population.curr_best_player.get_score(
-                    ), population.best_ever_player.get_score())
-                    population.curr_best_player.draw_network(
-                        window, node_id_renders)
-
                     if not population.finished():
                         population.update_survivors()
                     else:
@@ -124,7 +119,11 @@ def main() -> None:
                         if button.clicked(pos):
                             simulation_done = False
                             ai_player.alive = False
-                            target_generation = label
+                            if label != "best":
+                                target_generation = label
+                            else:
+                                ai_player = population.best_ever_player.clone()
+                                simulation_done = True
                             button.select()
                             for other in buttons.values():
                                 if other is not button:
@@ -138,7 +137,11 @@ def main() -> None:
                 button.draw(window)
         if simulation_done or human_playing or ai_player.alive:
             display_curr_score(window, score)
-
+        else:
+            display_best_score(window, population.curr_best_player.get_score(
+            ), population.best_ever_player.get_score())
+            population.curr_best_player.draw_network(
+                window, node_id_renders)
         pygame.display.update()
 
 
@@ -146,7 +149,7 @@ def display_button_info(window: pygame.Surface) -> None:
     font = pygame.font.SysFont(FONT, BUTTON_INFO_FONT_SIZE)
     label = font.render("Simulate generation", True, BRIGHT_BLUE)
     label_rect = label.get_rect(
-        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 195))
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 160))
 
     window.blit(label, label_rect)
 
@@ -155,7 +158,7 @@ def display_curr_score(window: pygame.Surface, score: int) -> None:
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
     label = font.render(f"Score: {score}", True, RUBY)
     label_rect = label.get_rect(
-        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 95))
 
     window.blit(label, label_rect)
 
@@ -164,7 +167,7 @@ def display_best_score(window: pygame.Surface, score: int, best_ever: int) -> No
     font = pygame.font.SysFont(FONT, SCORE_FONT_SIZE)
     label = font.render(f"Best score: {score} / {best_ever}", True, RUBY)
     label_rect = label.get_rect(
-        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 110))
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 95))
 
     window.blit(label, label_rect)
 
@@ -173,7 +176,7 @@ def display_generation(window: pygame.Surface, generation: int) -> None:
     font = pygame.font.SysFont(FONT, GENERATION_FONT_SIZE)
     label = font.render("Gen: " + str(generation), True, BRIGHT_BLUE)
     label_rect = label.get_rect(
-        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 50))
+        center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 40))
 
     window.blit(label, label_rect)
 
@@ -193,9 +196,9 @@ def draw_ui_lines(window: pygame.Surface) -> None:
     # pygame.draw.lines(window, BRIGHT_BLUE, True, [
     #                   (LEFT_MARGIN+GAME_SIZE+30, 30), (LEFT_MARGIN+GAME_SIZE+30, WINDOW_HEIGHT-30)])
     pygame.draw.lines(window, BRIGHT_BLUE, True, [
-                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 150), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 150)])
+                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 130), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 130)])
     pygame.draw.lines(window, BRIGHT_BLUE, True, [
-                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 300), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 300)])
+                      ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 310), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 310)])
 
 
 def animate_evolving_progress(window: pygame.Surface) -> None:
