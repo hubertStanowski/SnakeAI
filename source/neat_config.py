@@ -14,11 +14,6 @@ class NeatConfig:
         self.weight_difference_coefficient: float = 0.4    # c3
         self.compatibility_threshold: float = 3
 
-        # View settings
-        self.sensor_view: bool = False
-        # self.show_dying: bool = False
-        # self.draw_limit: int = 100
-
     def get_next_innovation_number(self) -> int:
         return self.get_next_innovation_number
 
@@ -57,13 +52,3 @@ class NeatConfig:
 
     def get_compatibility_threshold(self) -> float:
         return self.compatibility_threshold
-
-    # View functions
-    def toggle_sensor_view(self) -> None:
-        self.sensor_view = not self.sensor_view
-
-    # def toggle_show_dying(self) -> None:
-    #     self.show_dying = not self.show_dying
-
-    # def get_draw_limit(self) -> int:
-    #     return self.draw_limit

@@ -168,7 +168,7 @@ class Genome:
 
         return child
 
-    def fully_connect(self, config: NeatConfig, innovation_history: list[InnovationHistory]):
+    def fully_connect(self, config: NeatConfig, innovation_history: list[InnovationHistory]) -> None:
         for i in range(self.inputs):
             for j in range(self.outputs):
                 curr_innovation_number = self.get_innovation_number(

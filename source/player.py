@@ -7,11 +7,6 @@ from collections import defaultdict
 import math
 
 
-# TODO these possibly later after UI
-# ? change food detection so it has distance not just direction
-# ? try randomizing starting length
-
-
 class SnakeNode:
     def __init__(self, graph: Graph, row: int, col: int) -> None:
         self.row = row
@@ -40,7 +35,7 @@ class SnakeNode:
         self.color = (int(r * 255), int(g * 255), int(b * 255))
 
     @staticmethod
-    def hsv_to_rgb(h, s, v):
+    def hsv_to_rgb(h, s, v) -> tuple[float, float, float]:
         if s == 0.0:
             return v, v, v
         i = int(h * 6.0)  # Assume hue < 1
@@ -352,12 +347,9 @@ class Player:
             self.turn_left()
         elif outputs[1] == decision:
             self.turn_right()
-        else:
-            pass
 
 
 # Here and not in genome.py as that file is meant to be reusable and this function is not
-
 
     def draw_network(self, window: pygame.Surface, node_id_renders: list[pygame.Surface]) -> None:
         if not self.genome.network:
@@ -403,20 +395,19 @@ class Player:
             pygame.draw.circle(window, RUBY, node_pos[node], radius)
             window.blit(text, text_rect)
 
-
-# Node adding order id | *y_diff
-"""
-12  12
-11  10
-10  8
-9   6
-8   4
-7   2
-6   1
-5   3
-4   5
-3   7
-2   9
-1   11
-0   13
-"""
+        # Node adding order id | *y_diff
+        """
+        12  12
+        11  10
+        10  8
+        9   6
+        8   4
+        7   2
+        6   1
+        5   3
+        4   5
+        3   7
+        2   9
+        1   11
+        0   13
+        """
