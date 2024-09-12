@@ -3,7 +3,7 @@ Pure python implementation of NEAT algorithm for the snake game.
 
 Starting with fully connected neural network (in my FlappyBirdAI project I just let NEAT mutate all connections by itself)
 
-Project in progress, NEAT is fully functional, but still working on some UI elements.
+Project in progress, still polishing some things up, but it's basically ready.
 
 Will add  a guide within a week
 
