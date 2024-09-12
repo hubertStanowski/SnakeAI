@@ -140,6 +140,8 @@ def main() -> None:
             display_generation(window, current_generation)
             display_button_info(window)
             draw_ui_lines(window)
+            if pause:
+                display_paused(window)
             for button in buttons.values():
                 button.draw(window)
         if simulation_done or human_playing or ai_player.alive:
@@ -184,6 +186,15 @@ def display_generation(window: pygame.Surface, generation: int) -> None:
     label = font.render(f"Gen: {generation}", True, BRIGHT_BLUE)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 40))
+
+    window.blit(label, label_rect)
+
+
+def display_paused(window: pygame.Surface) -> None:
+    font = pygame.font.SysFont(FONT, RESET_FONT_SIZE)
+    label = font.render("PAUSED", True, ORANGE)
+    label_rect = label.get_rect(
+        center=((2*LEFT_MARGIN + GAME_SIZE) // 2, WINDOW_HEIGHT // 2.3))
 
     window.blit(label, label_rect)
 
