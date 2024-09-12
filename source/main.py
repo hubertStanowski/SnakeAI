@@ -8,10 +8,6 @@ from neat_config import NeatConfig
 import pygame
 
 
-# TODO training progress bar curr_gen/target_gen
-# TODO move some functions to new helpers.py folder
-
-
 def main() -> None:
     pygame.init()
 
@@ -23,7 +19,7 @@ def main() -> None:
     fps_idx = 1
 
     human_playing = False
-    # population_size was 500 change back if bad performance, 100 for final version, 250 good for testing
+    # population_size 100 for final version, 250 good for testing
     population_size = 250
     config = NeatConfig()
     population = Population(config, size=population_size)
@@ -41,7 +37,7 @@ def main() -> None:
     simulation_done = False
 
     animation_snake = initialize_animation_snake()
-    animation_step = [0]
+    animation_step = [0]  # in a list to pass as pointer
 
     while True:
         fps = FPS[fps_idx] if ai_player.alive or human_playing else 0
@@ -91,6 +87,8 @@ def main() -> None:
                         population.natural_selection()
                     animate_evolving_progress(
                         window, animation_snake, animation_step, clock.get_fps())
+                    display_training_info(
+                        window, population, target_generation)
 
             if simulation_done:
                 if ai_player.alive and not pause:
@@ -183,7 +181,7 @@ def display_best_score(window: pygame.Surface, score: int, best_ever: int) -> No
 
 def display_generation(window: pygame.Surface, generation: int) -> None:
     font = pygame.font.SysFont(FONT, GENERATION_FONT_SIZE)
-    label = font.render("Gen: " + str(generation), True, BRIGHT_BLUE)
+    label = font.render(f"Gen: {generation}", True, BRIGHT_BLUE)
     label_rect = label.get_rect(
         center=(LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//2), 40))
 
@@ -208,6 +206,25 @@ def draw_ui_lines(window: pygame.Surface) -> None:
                       ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 130), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 130)])
     pygame.draw.lines(window, BRIGHT_BLUE, True, [
                       ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//5.5)), 320), ((LEFT_MARGIN+GAME_SIZE+(RIGHT_MARGIN//1.2)), 320)])
+
+
+def display_training_info(window: pygame.Surface, population: Population, target_generation: int) -> None:
+    alive = len([player for player in population.players if player.alive])
+    font = pygame.font.SysFont(FONT, EVOL_INFO_FONT_SIZE)
+
+    alive_label = font.render(
+        f"Alive: {alive} / {population.size}", True, BRIGHT_BLUE)
+    alive_label_rect = alive_label.get_rect(
+        center=((LEFT_MARGIN+GAME_SIZE)//2, 160))
+
+    progress_label = font.render(
+        f"Training generation: {population.generation} / {target_generation}", True, BRIGHT_BLUE)
+    progress_label_rect = progress_label.get_rect(
+        center=((LEFT_MARGIN+GAME_SIZE)//2, 195))
+
+    # window.blit(size_label, size_label_rect)
+    window.blit(progress_label, progress_label_rect)
+    window.blit(alive_label, alive_label_rect)
 
 
 def animate_evolving_progress(window: pygame.Surface, animation_snake: Player, animation_step: list[int], real_fps: float) -> None:
