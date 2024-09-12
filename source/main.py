@@ -223,14 +223,14 @@ def display_training_info(window: pygame.Surface, population: Population, target
     alive = len([player for player in population.players if player.alive])
     font = pygame.font.SysFont(FONT, EVOL_INFO_FONT_SIZE)
 
-    alive_label = font.render(
-        f"Alive: {alive} / {population.size}", True, BRIGHT_BLUE)
-    alive_label_rect = alive_label.get_rect(
-        center=((LEFT_MARGIN+GAME_SIZE)//2, 160))
-
     progress_label = font.render(
         f"Training generation: {population.generation} / {target_generation}", True, BRIGHT_BLUE)
     progress_label_rect = progress_label.get_rect(
+        center=((LEFT_MARGIN+GAME_SIZE)//2, 160))
+
+    alive_label = font.render(
+        f"Alive: {alive} / {population.size}", True, BRIGHT_BLUE)
+    alive_label_rect = alive_label.get_rect(
         center=((LEFT_MARGIN+GAME_SIZE)//2, 195))
 
     # window.blit(size_label, size_label_rect)
