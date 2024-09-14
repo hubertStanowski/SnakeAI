@@ -17,7 +17,7 @@ Pure python implementation of NEAT algorithm for Snake game. (graphics in pygame
     pip install -r requirements.txt
 
 ### Run the program
-    python main.py
+    python source/main.py
   
 # Usage
 ### Default settings
