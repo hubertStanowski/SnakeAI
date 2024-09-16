@@ -21,9 +21,9 @@ Demo video: https://youtu.be/qQXeDleLzTU
   
 # Usage
 ### Default settings
-You can modify these settings in user_config.py file **TODO**
+You can modify these settings in user_config.py file 
 
-- Population size = 100
+- Population size = 300
 - Human playing = False
 
 ### Simulating generations
