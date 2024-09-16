@@ -36,9 +36,9 @@ You can modify these settings in user_config.py file **TODO**
 ### Game speed (FPS)
 - You can speed up the game by pressing **PLUS** button
 - You can slow down the game by pressing **MINUS** button
-- This will cycle throught three available speed options
+- This will cycle through all available speed options
 ### Additional information
-- You can pause the simulation by pressing **SPACE** button, to unpause press **SPACE** again
+- You can pause the simulation by pressing **SPACE** button, to resume press **SPACE** again
 # Resources
  
 ## NEAT
