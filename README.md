@@ -1,7 +1,7 @@
 # SnakeAI
 Pure python implementation of NEAT algorithm for Snake game. (graphics in pygame).
 
-**TODO embed video**
+Demo video: https://youtu.be/qQXeDleLzTU
 
 > [!WARNING]
 > Due to random nature of this algorithm, it is possible there are bugs that I haven't encountered
@@ -40,7 +40,6 @@ You can modify these settings in user_config.py file **TODO**
 ### Additional information
 - You can pause the simulation by pressing **SPACE** button, to unpause press **SPACE** again
 # Resources
-- **TODO** https://youtu.be/0mKHcnQlVi0 - my demo video on YouTube (same as embedded above)
  
 ## NEAT
 - https://neat-python.readthedocs.io/en/latest/neat_overview.html - overview
