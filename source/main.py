@@ -4,6 +4,7 @@ from player import *
 from buttons import *
 from population import Population
 from neat_config import NeatConfig
+from user_config import *
 
 import pygame
 
@@ -18,9 +19,8 @@ def main() -> None:
     clock = pygame.time.Clock()
     fps_idx = 1
 
-    human_playing = False
-    # population_size 100 for final version, 250 good for testing
-    population_size = 250
+    human_playing = HUMAN_PLAYING
+    population_size = POPULATION_SIZE
     config = NeatConfig()
     population = Population(config, size=population_size)
     score = 0
