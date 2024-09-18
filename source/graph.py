@@ -44,9 +44,6 @@ class GraphNode:
         x = LEFT_MARGIN + self.col * self.size
         y = TOP_MARGIN + self.row * self.size
 
-        # if self.row == 12 and self.col == 12:
-        #     self.color = BLACK
-
         pygame.draw.rect(window, self.color, (x, y, self.size, self.size))
         if gridlines:
             # pygame.draw.rect(window, WHITE, (x, y, self.size, self.size), 1) # worse than lines (uneven lines)
