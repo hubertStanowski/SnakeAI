@@ -243,25 +243,25 @@ class Player:
         bottom_body = self.graph.size - 1
         for i in range(self.head.row+1, self.graph.size):
             if self.graph.grid[i][self.head.col].is_snake():
-                bottom_body = i
+                bottom_body = abs(self.head.row-i)
                 break
 
         top_body = self.graph.size - 1
         for i in range(self.head.row-1, -1, -1):
             if self.graph.grid[i][self.head.col].is_snake():
-                top_body = i
+                top_body = abs(self.head.row-i)
                 break
 
         right_body = self.graph.size - 1
         for j in range(self.head.col+1, self.graph.size):
             if self.graph.grid[self.head.row][j].is_snake():
-                right_body = j
+                right_body = abs(self.head.col-j)
                 break
 
         left_body = self.graph.size - 1
         for j in range(self.head.col-1, -1, -1):
             if self.graph.grid[self.head.row][j].is_snake():
-                left_body = j
+                left_body = abs(self.head.col-j)
                 break
 
         top_body = remap(top_body, 0, self.graph.size-1, 0, 1)

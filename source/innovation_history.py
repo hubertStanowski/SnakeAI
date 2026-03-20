@@ -3,8 +3,8 @@ from node_gene import NodeGene
 
 class InnovationHistory:
     def __init__(self, input: int, output: int, innovation_number: int, connected_innovation_numbers: list[int]) -> None:
-        self.input: NodeGene = input
-        self.output: NodeGene = output
+        self.input: int = input
+        self.output: int = output
         self.innovation_number: int = innovation_number
         self.connected_innovation_numbers: list[int] = connected_innovation_numbers.copy(
         )  # idk why autopep8 does this
